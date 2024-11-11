@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "Translatify: Spotify Lyrics Translator",
+    "description": "Spotify Lyrics Translator",
+    "version": "1.0",
+    "action": {
+      "default_popup": "popup/popup.html",
+      "default_icon": "images/icon-128.png"
+    },
+
+    "icons": {
+          "16": "images/icon-16.png",
+          "32": "images/icon-32.png",
+          "48": "images/icon-64.png",
+          "128": "images/icon-128.png"
+    },
+
+    "content_scripts": [
+          {
+            "js": ["scripts/lyricsTranslator.js"],
+            "matches": [
+              "https://open.spotify.com/*"
+            ]
+          }
+        ]
+      
+}
