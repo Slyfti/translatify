@@ -18,11 +18,16 @@
     "content_scripts": [
           {
             "css": ["styles/translatify.css"],
-            "js": ["scripts/lyricsTranslator.js"],
+            "js": ["scripts/translateButton.js","scripts/lyricsTranslator.js"],
             "matches": [
               "https://open.spotify.com/*"
             ]
           }
-        ]
+    ],
+
+    "permissions": [
+      "storage"
+    ]
+
       
 }
