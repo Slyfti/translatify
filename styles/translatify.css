@@ -1,0 +1,13 @@
+.newLyrics {
+    font-size: 0.5em;
+    opacity: 0.5;
+    line-height: 0.5em;
+}
+
+.newLyrics:hover {
+    opacity: 0.5;
+}
+
+.modifedLyricsWrapper {
+    margin-top: 0.5em;
+}
