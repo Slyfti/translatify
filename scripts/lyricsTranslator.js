@@ -50,7 +50,7 @@ function getTranslatedLyricsToList(translatedLyrics) {
 
 function replaceLyrics(translatedLyricsList) {
     const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
-    if (lyricsWrapperList != null) {
+    if (lyricsWrapperList[0] != null) {
             const tag= document.createElement("div");
             tag.id="translated";
             lyricsWrapperList[0].appendChild(tag);
@@ -100,7 +100,12 @@ function restoreLyrics() {
 
 async function main() {
     const sourceLanguage = "auto";
-    const destinationLanguage = "fr";
+    let destinationLanguage = "eng";
+
+    destinationLanguage = await chrome.storage.local.get(["language"]);
+    destinationLanguage = destinationLanguage.language;
+
+
     const translateButton = document.querySelector("button[data-testid='translate-button']");
 
 
@@ -160,45 +165,6 @@ function translateLyrics() {
 }
 */
 
-function injectButtons() {
-    var lyricsButton = document.querySelector("button[data-testid='control-button-repeat']");
-    if (lyricsButton) {
-        addTranslateButton();
-        setupListening();
-
-    } else {
-        setTimeout(injectButtons, 100);
-    }
-
-}
-
-
-function nowPlayingListener() {
-    var nowPlaying = document.querySelector("div[data-testid='now-playing-widget']");
-    if (nowPlaying) {
-        var observer = new MutationObserver(function(mutationsList, observer) {
-            for (var mutation of mutationsList){
-                setTimeout(main, 100);
-                console.log('Next music');
-            }
-        });
-
-        observer.observe(nowPlaying, { attributes: true});
-
-
-        console.log(nowPlaying);
-    } else {
-        setTimeout(nowPlayingListener, 100);
-    }
-
-
-    
-}
-
-
-
-console.log("Lyrics Translator is running");
-
-
-injectButtons();
-nowPlayingListener();
+eraseButton();
+loadChecker();
+console.log("Lyrics Translator is running..");

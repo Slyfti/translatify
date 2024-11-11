@@ -1,6 +1,156 @@
 <html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="popup.css">
+    <!-- UTF8 compatiblity-->
+     <meta charset="UTF-8">
+
+  </head>
   <body>
+    <!-- LOGO OF APP-->
+    <div class="header">
+    <img src="../images/icon-64.png" width="64px" height="64px" alt="Logo">
     <h1>Translatify</h1>
+    </div>
+
+    <select name="languageSelector" id="languageSelector">
+      <option value="af">Afrikaans (Afrikaans)</option>
+      <option value="sq">Shqip (Albanian)</option>
+      <option value="am">አማርኛ (Amharic)</option>
+      <option value="ar">العربية (Arabic)</option>
+      <option value="hy">Հայերեն (Armenian)</option>
+      <option value="as">অসমীয়া (Assamese)</option>
+      <option value="ay">Aymar aru (Aymara)</option>
+      <option value="az">Azərbaycanca (Azerbaijani)</option>
+      <option value="bm">Bamanankan (Bambara)</option>
+      <option value="eu">Euskara (Basque)</option>
+      <option value="be">Беларуская (Belarusian)</option>
+      <option value="bn">বাংলা (Bengali)</option>
+      <option value="bho">भोजपुरी (Bhojpuri)</option>
+      <option value="bs">Bosanski (Bosnian)</option>
+      <option value="bg">Български (Bulgarian)</option>
+      <option value="ca">Català (Catalan)</option>
+      <option value="ceb">Binisaya (Cebuano)</option>
+      <option value="zh-CN">简体中文 (Chinese, Simplified)</option>
+      <option value="zh-TW">繁體中文 (Chinese, Traditional)</option>
+      <option value="co">Corsu (Corsican)</option>
+      <option value="hr">Hrvatski (Croatian)</option>
+      <option value="cs">Čeština (Czech)</option>
+      <option value="da">Dansk (Danish)</option>
+      <option value="dv">ދިވެހިބަސް (Divehi)</option>
+      <option value="doi">डोगरी (Dogri)</option>
+      <option value="nl">Nederlands (Dutch)</option>
+      <option value="en">English (English)</option>
+      <option value="eo">Esperanto (Esperanto)</option>
+      <option value="et">Eesti (Estonian)</option>
+      <option value="ee">Eʋegbe (Ewe)</option>
+      <option value="fil">Filipino (Filipino)</option>
+      <option value="fi">Suomi (Finnish)</option>
+      <option value="fr">Français (French)</option>
+      <option value="fy">Frysk (Frisian)</option>
+      <option value="gl">Galego (Galician)</option>
+      <option value="ka">ქართული (Georgian)</option>
+      <option value="de">Deutsch (German)</option>
+      <option value="el">Ελληνικά (Greek)</option>
+      <option value="gn">Avañe'ẽ (Guarani)</option>
+      <option value="gu">ગુજરાતી (Gujarati)</option>
+      <option value="ht">Kreyòl Ayisyen (Haitian Creole)</option>
+      <option value="ha">Hausa (Hausa)</option>
+      <option value="haw">ʻŌlelo Hawaiʻi (Hawaiian)</option>
+      <option value="he">עברית (Hebrew)</option>
+      <option value="hi">हिन्दी (Hindi)</option>
+      <option value="hmn">Hmoob (Hmong)</option>
+      <option value="hu">Magyar (Hungarian)</option>
+      <option value="is">Íslenska (Icelandic)</option>
+      <option value="ig">Igbo (Igbo)</option>
+      <option value="ilo">Ilocano (Ilocano)</option>
+      <option value="id">Bahasa Indonesia (Indonesian)</option>
+      <option value="ga">Gaeilge (Irish)</option>
+      <option value="it">Italiano (Italian)</option>
+      <option value="ja">日本語 (Japanese)</option>
+      <option value="jv">Basa Jawa (Javanese)</option>
+      <option value="kn">ಕನ್ನಡ (Kannada)</option>
+      <option value="kk">Қазақ (Kazakh)</option>
+      <option value="km">ភាសាខ្មែរ (Khmer)</option>
+      <option value="rw">Kinyarwanda (Kinyarwanda)</option>
+      <option value="gom">कोंकणी (Konkani)</option>
+      <option value="ko">한국어 (Korean)</option>
+      <option value="kri">Krio (Krio)</option>
+      <option value="ku">Kurdî (Kurdish)</option>
+      <option value="ckb">کوردیی ناوەندی (Kurdish, Sorani)</option>
+      <option value="ky">Кыргызча (Kyrgyz)</option>
+      <option value="lo">ລາວ (Lao)</option>
+      <option value="la">Latina (Latin)</option>
+      <option value="lv">Latviešu (Latvian)</option>
+      <option value="ln">Lingála (Lingala)</option>
+      <option value="lt">Lietuvių (Lithuanian)</option>
+      <option value="lg">Luganda (Luganda)</option>
+      <option value="lb">Lëtzebuergesch (Luxembourgish)</option>
+      <option value="mk">Македонски (Macedonian)</option>
+      <option value="mai">मैथिली (Maithili)</option>
+      <option value="mg">Malagasy (Malagasy)</option>
+      <option value="ms">Bahasa Melayu (Malay)</option>
+      <option value="ml">മലയാളം (Malayalam)</option>
+      <option value="mt">Malti (Maltese)</option>
+      <option value="mi">Māori (Maori)</option>
+      <option value="mr">मराठी (Marathi)</option>
+      <option value="mni-Mtei">ꯃꯤꯇꯩ ꯂꯣꯟ (Meitei)</option>
+      <option value="lus">Mizo ṭawng (Mizo)</option>
+      <option value="mn">Монгол (Mongolian)</option>
+      <option value="my">ဗမာစာ (Burmese)</option>
+      <option value="ne">नेपाली (Nepali)</option>
+      <option value="no">Norsk (Norwegian)</option>
+      <option value="ny">Chichewa (Nyanja)</option>
+      <option value="or">ଓଡ଼ିଆ (Odia)</option>
+      <option value="om">Oromoo (Oromo)</option>
+      <option value="ps">پښتو (Pashto)</option>
+      <option value="fa">فارسی (Persian)</option>
+      <option value="pl">Polski (Polish)</option>
+      <option value="pt">Português (Portuguese)</option>
+      <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+      <option value="qu">Runasimi (Quechua)</option>
+      <option value="ro">Română (Romanian)</option>
+      <option value="ru">Русский (Russian)</option>
+      <option value="sm">Gagana Samoa (Samoan)</option>
+      <option value="sa">संस्कृतम् (Sanskrit)</option>
+      <option value="gd">Gàidhlig (Scottish Gaelic)</option>
+      <option value="nso">Sepedi (Sepedi)</option>
+      <option value="sr">Српски (Serbian)</option>
+      <option value="st">Sesotho (Sesotho)</option>
+      <option value="sn">ChiShona (Shona)</option>
+      <option value="sd">سنڌي (Sindhi)</option>
+      <option value="si">සිංහල (Sinhala)</option>
+      <option value="sk">Slovenčina (Slovak)</option>
+      <option value="sl">Slovenščina (Slovenian)</option>
+      <option value="so">Soomaali (Somali)</option>
+      <option value="es">Español (Spanish)</option>
+      <option value="su">Basa Sunda (Sundanese)</option>
+      <option value="sw">Kiswahili (Swahili)</option>
+      <option value="sv">Svenska (Swedish)</option>
+      <option value="tl">Tagalog (Tagalog)</option>
+      <option value="tg">Тоҷикӣ (Tajik)</option>
+      <option value="ta">தமிழ் (Tamil)</option>
+      <option value="tt">Татар (Tatar)</option>
+      <option value="te">తెలుగు (Telugu)</option>
+      <option value="th">ไทย (Thai)</option>
+      <option value="ti">ትግርኛ (Tigrinya)</option>
+      <option value="ts">Xitsonga (Tsonga)</option>
+      <option value="tr">Türkçe (Turkish)</option>
+      <option value="tk">Türkmen (Turkmen)</option>
+      <option value="ak">Twi (Akan)</option>
+      <option value="uk">Українська (Ukrainian)</option>
+      <option value="ur">اردو (Urdu)</option>
+      <option value="ug">ئۇيغۇرچە (Uyghur)</option>
+      <option value="uz">Oʻzbek (Uzbek)</option>
+      <option value="vi">Tiếng Việt (Vietnamese)</option>
+      <option value="cy">Cymraeg (Welsh)</option>
+      <option value="xh">isiXhosa (Xhosa)</option>
+      <option value="yi">ייִדיש (Yiddish)</option>
+      <option value="yo">Yorùbá (Yoruba)</option>
+      <option value="zu">isiZulu (Zulu)</option>
+  </select>
+
+  <button id="applyLanguage">Apply language</button>
+    
     <script src="popup.js"></script>
   </body>
 </html>

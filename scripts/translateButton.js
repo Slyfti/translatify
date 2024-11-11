@@ -1,12 +1,74 @@
+function eraseButton() {
+    const translationButton = document.querySelector("button[data-testid='translate-button']");
+    if (translationButton) {
+        translationButton.remove();
+    }
+}
+
+// Wait for all the buttons to load before adding the translate button
+function loadChecker() {
+    var repeatButton = document.querySelector("button[data-testid='control-button-repeat']");
+    var nowPlaying = document.querySelector("div[data-testid='now-playing-widget']");
+    var lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
+
+    if (repeatButton && nowPlaying && lyricsButton) {
+        addTranslateButton();
+        setupListening();
+
+        // Check if the translate button was enabled on previous session
+        chrome.storage.local.get(["translateButton"]).then((result) => {
+            console.log(result);
+            if (result.translateButton) {
+                toggleTranslateButton();
+            }
+          });
+
+    } else {
+        setTimeout(loadChecker, 100);
+    }
+}
+
+// Sets up all the event listeners
 function setupListening() {
     const buttonList = document.querySelectorAll("button");
     const translateButton = document.querySelector("button[data-testid='translate-button']");
+    const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
+    const nowPlaying = document.querySelector("div[data-testid='now-playing-widget']");
+
+    
+
+    buttonList.forEach((button) => {
+        button.addEventListener("click", main);
+        button.addEventListener("click", enableTranslateButton);
+    });
     
     translateButton.removeEventListener("change",main);
     translateButton.removeEventListener("click",main);
+    
+    // Listen for changes in the now playing widget
+    var nowPlayingObserver = new MutationObserver(function(mutationsList, nowPlayingObserver) {
+        setTimeout(main, 100);
+        console.log('Next music');
+    });
+    nowPlayingObserver.observe(nowPlaying, { attributes: true});
+
+    // Listen for changes in the button bar
+    const rightButtonBar = lyricsButton.parentNode;
+    // Only works on the button bar
+    var rightButtonBarObserver = new MutationObserver(function(mutationsList, rightButtonBarObserver) {
+        console.log('Button bar changed');
+        setTimeout(enableTranslateButton, 0);
+        main();
+        
+    });
+    rightButtonBarObserver.observe(rightButtonBar, { subtree: true, childList: true});
 
 
+
+    console.log(lyricsButton);
 }
+
+
 
 function toggleTranslateButton() {
     const translateButton = document.querySelector("button[data-testid='translate-button']");
@@ -15,6 +77,7 @@ function toggleTranslateButton() {
         translateButton.setAttribute("aria-pressed", "true");
         // Green button
         translateButton.classList.add("hKhTmo");
+        translateButton.classList.add("translateButton");
         translateButton.classList.add("RK45o6dbvO1mb0wQtSwq");
         translateButton.classList.add("fZjbVIqD8Xc3auRZOxu5");
 
@@ -24,6 +87,7 @@ function toggleTranslateButton() {
     } else {
         translateButton.setAttribute("aria-pressed", "false");
         translateButton.classList.remove("hKhTmo");
+        translateButton.classList.remove("translateButton"); 
         translateButton.classList.remove("RK45o6dbvO1mb0wQtSwq"); 
         translateButton.classList.remove("fZjbVIqD8Xc3auRZOxu5");
         
@@ -36,16 +100,26 @@ function toggleTranslateButton() {
 
 }
 
+function enableTranslateButton() {
+    const translateButton = document.querySelector("button[data-testid='translate-button']");
+    const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
+
+    if (lyricsButton.getAttribute("data-active") == "true") {
+        translateButton.disabled = false;
+    } else if (lyricsButton.getAttribute("data-active") == "false") {
+        translateButton.disabled = true;
+    }
+}
+
 
 function addTranslateButton() {
-    const lyricsButton = document.querySelector("button[data-testid='control-button-repeat']");
-    const buttonBar = lyricsButton.parentElement;
-    const translateButton = lyricsButton.cloneNode(true);
+    const repeatButton = document.querySelector("button[data-testid='control-button-repeat']");
+    const buttonBar = repeatButton.parentElement;
+    const translateButton = repeatButton.cloneNode(true);
 
     translateButton.setAttribute("data-testid", "translate-button");
     translateButton.setAttribute("aria-pressed", "false");
     translateButton.className="Button-sc-1dqy6lx-0 dmdXQN";
-    translateButton.disabled = false;
 
       
     
@@ -57,14 +131,4 @@ function addTranslateButton() {
 
 
     translateButton.addEventListener('click', toggleTranslateButton);
-
-
-    chrome.storage.local.get(["translateButton"]).then((result) => {
-        console.log(result);
-        if (result.translateButton) {
-            setTimeout(() => {
-                toggleTranslateButton();
-            }, 2000);
-        }
-      });
 }

@@ -8,6 +8,50 @@
     opacity: 0.5;
 }
 
-.modifedLyricsWrapper {
-    margin-top: 0.5em;
+.translateButton {
+    background-color: transparent;
+    border: none;
+    color: hsla(0,0%,100%,.7);
+    height: 32px;
+    position: relative;
+    width: 32px
+}
+
+.translateButton:focus-visible,.translateButton:hover {
+    color: #fff
+}
+
+.translateButton:focus-visible:active,.translateButton:hover:active {
+    color: hsla(0,0%,100%,.7)
+}
+
+.translateButton.RK45o6dbvO1mb0wQtSwq {
+    color: #1db954
+}
+
+.translateButton.RK45o6dbvO1mb0wQtSwq:focus,.translateButton.RK45o6dbvO1mb0wQtSwq:hover {
+    color: #1ed760
+}
+
+.translateButton.RK45o6dbvO1mb0wQtSwq:active {
+    color: hsla(0,0%,100%,.7)
+}
+
+.translateButton.RK45o6dbvO1mb0wQtSwq:active:focus,.translateButton.RK45o6dbvO1mb0wQtSwq:active:hover {
+    color: #1db954
+}
+
+.translateButton.EHxL6K_6WWDlTCZP6x5w:after {
+    background-color: #1db954;
+    border-radius: 50%;
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 4px;
+    left: 50%;
+    position: absolute;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    width: 4px;
+    inline-size: 4px!important;
 }
