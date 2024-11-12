@@ -1,5 +1,6 @@
 const applyLanguageButton = document.getElementById('applyLanguage');
 const languageSelector = document.getElementById('languageSelector');
+const newLyricsSize = document.getElementById('newLyricsSize');
 
 chrome.storage.local.get(['language'], (result) => {
     if (result.language) {
@@ -7,6 +8,15 @@ chrome.storage.local.get(['language'], (result) => {
     }
 }
 );
+
+chrome.storage.local.get(['newLyricsSize'], (result) => {
+    if (result.newLyricsSize) {
+        newLyricsSize.value = result.newLyricsSize;
+    }
+}
+);
+
+
 
 applyLanguageButton.addEventListener('click', async () => {
     const language = languageSelector.value;
@@ -24,3 +34,21 @@ applyLanguageButton.addEventListener('click', async () => {
 
     
 });
+
+newLyricsSize.addEventListener('change', async () => {
+    const size = newLyricsSize.value;
+    chrome.storage.local.set({newLyricsSize: size}).then(() => {
+        console.log("Translatify: Change lyric size");
+    });
+    
+
+    chrome.tabs.query({}, tabs => {
+        tabs.forEach(tab => {
+        chrome.tabs.sendMessage(tab.id, { newLyricsSize: size });
+      });
+    });
+
+
+    
+});
+

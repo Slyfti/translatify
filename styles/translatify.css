@@ -8,8 +8,9 @@
 
 .newLyrics {
     font-size: var(--newLyricsSize);
+    margin-bottom: 10px;
     opacity: 0.5;
-    line-height: 0.5em;
+    line-height: 1em;
 }
 
 .newLyrics:hover {

@@ -7,4 +7,10 @@ chrome.runtime.onMessage.addListener(msgObj => {
         console.log("Translatify: Language updated!");
         refreshTranslation();
     }
+
+    if (msgObj.newLyricsSize) {
+        document.documentElement.style.setProperty('--newLyricsSize', msgObj.newLyricsSize + 'em');
+        console.log("Translatify: Lyrics size updated!");
+        
+    }
 });

@@ -1,29 +1,3 @@
-
-
-function getLyrics() {
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
-    const lyricsList = [];
-    if (lyricsWrapperList) {
-        lyricsWrapperList.forEach((lyricsWrapper) => {
-            const lyrics = lyricsWrapper.firstChild.textContent;
-            lyricsList.push(lyrics);
-        });
-    }
-    return lyricsList;
-}
-
-
-
-
-function getFullLyrics(lyricsList) {
-    let fullLyrics = "";
-    if (lyricsList) {
-        fullLyrics = lyricsList.join(";");
-    }
-    return fullLyrics;
-}
-
-
 async function translateText(text,sourceLanguage,destinationLanguage) {
 
     const params = `&sl=${sourceLanguage}&tl=${destinationLanguage}&q=${text}`;
@@ -42,6 +16,45 @@ async function translateText(text,sourceLanguage,destinationLanguage) {
         return null;
     }
 }
+
+function restoreLyrics() {
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    if (lyricsWrapperList) {
+        lyricsWrapperList.forEach((lyricsWrapper, index) => {
+            lyricsWrapper.classList.remove("modifedLyricsWrapper");
+            
+            const lyrics = lyricsWrapper.querySelector(".newLyrics");
+
+            if (lyrics) {
+                const originalLyrics = lyricsWrapper.querySelector(".originalLyrics").innerText;
+                lyrics.innerText = originalLyrics;
+                lyrics.classList.remove("newLyrics");
+
+                lyricsWrapper.querySelector(".originalLyrics").remove();
+            }
+        });
+    }
+
+
+    const tag = document.getElementById("translated");
+    if (tag) {
+        tag.remove();
+    }
+}
+
+
+// 1ST METHOD
+
+
+
+function getFullLyrics(lyricsList) {
+    let fullLyrics = "";
+    if (lyricsList) {
+        fullLyrics = lyricsList.join(";");
+    }
+    return fullLyrics;
+}
+
 
 function getTranslatedLyricsToList(translatedLyrics) {
     if (translatedLyrics == null) {
@@ -77,31 +90,6 @@ function replaceLyrics(translatedLyricsList) {
 
 }
 
-function restoreLyrics() {
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
-    if (lyricsWrapperList) {
-        lyricsWrapperList.forEach((lyricsWrapper, index) => {
-            lyricsWrapper.classList.remove("modifedLyricsWrapper");
-            
-            const lyrics = lyricsWrapper.querySelector(".newLyrics");
-
-            if (lyrics) {
-                const originalLyrics = lyricsWrapper.querySelector(".originalLyrics").innerText;
-                lyrics.innerText = originalLyrics;
-                lyrics.classList.remove("newLyrics");
-
-                lyricsWrapper.querySelector(".originalLyrics").remove();
-            }
-        });
-    }
-
-
-    const tag = document.getElementById("translated");
-    if (tag) {
-        tag.remove();
-    }
-}
-
 
 async function translateAllWithGoogle(sourceLanguage,destinationLanguage) {
     const lyricsList = getLyrics();
@@ -112,6 +100,20 @@ async function translateAllWithGoogle(sourceLanguage,destinationLanguage) {
     replaceLyrics(translatedLyricsList);
 }
 
+
+// 2ND METHOD
+
+function getLyrics() {
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    const lyricsList = [];
+    if (lyricsWrapperList) {
+        lyricsWrapperList.forEach((lyricsWrapper) => {
+            const lyrics = lyricsWrapper.firstChild.textContent;
+            lyricsList.push(lyrics);
+        });
+    }
+    return lyricsList;
+}
 
 async function replaceLyricAsync(translatedLine, index) {
     const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
@@ -158,6 +160,8 @@ async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage)
     }
 }
 
+
+// MAIN TRANSLATE FUNCTION
 async function translate() {
     const sourceLanguage = "auto";
     let destinationLanguage = "eng";
@@ -185,49 +189,3 @@ function refreshTranslation() {
     }
     translate();
 }
-
-
-/*
-https://github.com/ssut/py-googletrans/issues/268
-// The URL to translate text is:
-"https://translate.googleapis.com/translate_a/single?client=gtx&dt=t + params"
-// where the params are:
-{
-  "sl": source language,
-  "tl": destination language,
-  "q": the text to translate
-}
-
-*/ 
-
-
-/*
-// Function to translate lyrics line by line
-
-function translateLyrics() {
-    const translationMap = new Map();
-
-    // No need to translate these characters
-    translationMap.set('♪', '♪');
-    translationMap.set(' ', ' ');
-    translationMap.set('', '');
-
-
-
-    const lyricsList = getLyrics();
-    const translatedLyricsList = [];
-    if (lyricsList) {
-        lyricsList.forEach((lyrics) => {
-            if (translationMap.has(lyrics)) {
-                translatedLyricsList.push(translationMap.get(lyrics));
-            } else {
-                const translatedLyrics = await translateText(lyrics);
-                translationMap.set(lyrics, translatedLyrics);
-                translatedLyricsList.push(translatedLyrics);
-            }
-        });
-    }
-    console.log(translatedLyricsList);
-}
-*/
-
