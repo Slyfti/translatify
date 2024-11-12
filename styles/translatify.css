@@ -4,7 +4,9 @@
     --lyricsColor: #fff;
 }
   
-
+h1 {
+    color: #1db954;
+}
 
 .newLyrics {
     font-size: var(--newLyricsSize);

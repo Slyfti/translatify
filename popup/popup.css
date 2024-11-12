@@ -1,10 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background-color: #191414;
     color:aliceblue;
     font-family: 'Noto Sans', sans-serif;
     width: 500px;
+}
+
+h1 {
+    color: #1db954;
 }
 
 .header {
@@ -15,10 +23,10 @@ body {
 }
 
 .options {
+    gap: 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
     width: 100%;
 }
 
@@ -31,9 +39,9 @@ body {
 }
 
 button, input {
-    background-color: #1DB954;
+    background-color: white;
     border: none;
-    color: white;
+    color: black;
     font-weight: bold;
     height: 32px;
     width: 100%;
@@ -42,10 +50,13 @@ button, input {
 button:hover, input:hover {
     background-color: #1ED760;
     cursor: pointer;
+    transition: all 0.25s;
 }
 
 select {
     border: none;
     height: 32px;
     width: 100%;
+    background-color: #333333;
+    color: white;
 }
