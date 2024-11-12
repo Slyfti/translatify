@@ -102,7 +102,63 @@ function restoreLyrics() {
     }
 }
 
-async function main() {
+
+async function translateAllWithGoogle(sourceLanguage,destinationLanguage) {
+    const lyricsList = getLyrics();
+    const fullLyrics = getFullLyrics(lyricsList);
+    const translatedLyrics = await translateText(fullLyrics,sourceLanguage,destinationLanguage);
+    const translatedLyricsList = getTranslatedLyricsToList(translatedLyrics);
+    console.log(translatedLyricsList);
+    replaceLyrics(translatedLyricsList);
+}
+
+
+async function replaceLyricAsync(translatedLine, index) {
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    if (lyricsWrapperList[0] != null && translatedLine != null) {
+            const lyricsWrapper = lyricsWrapperList[index];
+
+            lyricsWrapper.classList.add("modifedLyricsWrapper");
+            const lyrics = lyricsWrapper.firstChild;
+            const newLyrics = lyrics.cloneNode(true);
+
+            lyrics.setAttribute("original",lyrics.innerText);
+            lyrics.classList.add("originalLyrics");
+
+            newLyrics.innerText = translatedLine;
+            lyricsWrapper.appendChild(newLyrics);
+            newLyrics.classList.add("newLyrics");
+        
+    }
+
+}
+
+
+async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage) {
+    const translationMap = new Map();
+
+    // Tag to let know that the lyrics are translated
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    const tag= document.createElement("div");
+    tag.id="translated";
+    lyricsWrapperList[0].appendChild(tag);
+
+    // No need to translate these characters
+    translationMap.set('♪', '♪');
+    translationMap.set(' ', ' ');
+    translationMap.set('', '');
+
+    const lyricsList = getLyrics();
+    let translatedLyricsList = new Array();
+    if (lyricsList) {
+        lyricsList.forEach(async (lyrics, index) => {
+            let translatedLine = await translateText(lyrics,sourceLanguage,destinationLanguage);
+            replaceLyricAsync(translatedLine,index);
+        });
+    }
+}
+
+async function translate() {
     const sourceLanguage = "auto";
     let destinationLanguage = "eng";
 
@@ -114,11 +170,7 @@ async function main() {
 
 
     if (translateButton.getAttribute("aria-pressed") == "true" && document.getElementById("translated") == null ) {
-        const lyricsList = getLyrics();
-        const fullLyrics = getFullLyrics(lyricsList);
-        const translatedLyrics = await translateText(fullLyrics,sourceLanguage,destinationLanguage);
-        const translatedLyricsList = getTranslatedLyricsToList(translatedLyrics);
-        replaceLyrics(translatedLyricsList);
+        translateLineByLineWithGoogle(sourceLanguage,destinationLanguage);
     } else if (translateButton.getAttribute("aria-pressed") == "false" && document.getElementById("translated") != null) {
         restoreLyrics();
     }
@@ -131,7 +183,7 @@ function refreshTranslation() {
         tag.remove();
         restoreLyrics();
     }
-    main();
+    translate();
 }
 
 

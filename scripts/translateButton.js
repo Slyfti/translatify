@@ -37,16 +37,16 @@ function setupListening() {
     
 
     buttonList.forEach((button) => {
-        button.addEventListener("click", main);
+        button.addEventListener("click", translate);
         button.addEventListener("click", enableTranslateButton);
     });
     
-    translateButton.removeEventListener("change",main);
-    translateButton.removeEventListener("click",main);
+    translateButton.removeEventListener("change",translate);
+    translateButton.removeEventListener("click",translate);
     
     // Listen for changes in the now playing widget
     var nowPlayingObserver = new MutationObserver(function(mutationsList, nowPlayingObserver) {
-        setTimeout(main, 100);
+        setTimeout(translate, 100);
         console.log('Translatify: Next music');
     });
     nowPlayingObserver.observe(nowPlaying, { attributes: true});
@@ -57,7 +57,7 @@ function setupListening() {
     var rightButtonBarObserver = new MutationObserver(function(mutationsList, rightButtonBarObserver) {
         console.log('Translatify: Button bar changed');
         setTimeout(enableTranslateButton, 0);
-        main();
+        translate();
         
     });
     rightButtonBarObserver.observe(rightButtonBar, { subtree: true, childList: true});
@@ -91,7 +91,7 @@ function toggleTranslateButton() {
         chrome.storage.local.set({translateButton:false});
     }
 
-    main();
+    translate();
 
 }
 
