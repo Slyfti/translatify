@@ -1,5 +1,13 @@
+:root {
+    --newLyricsSize: 0.5em;
+    --lyricsSize: 1em;
+    --lyricsColor: #fff;
+}
+  
+
+
 .newLyrics {
-    font-size: 0.5em;
+    font-size: var(--newLyricsSize);
     opacity: 0.5;
     line-height: 0.5em;
 }
@@ -14,7 +22,7 @@
     color: hsla(0,0%,100%,.7);
     height: 32px;
     position: relative;
-    width: 32px
+    width: 32px;
 }
 
 .translateButton:focus-visible,.translateButton:hover {

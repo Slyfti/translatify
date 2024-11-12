@@ -18,7 +18,7 @@
     "content_scripts": [
           {
             "css": ["styles/translatify.css"],
-            "js": ["scripts/translateButton.js","scripts/lyricsTranslator.js"],
+            "js": ["scripts/translateButton.js","scripts/lyricsTranslator.js", "scripts/main.js"],
             "matches": [
               "https://open.spotify.com/*"
             ]

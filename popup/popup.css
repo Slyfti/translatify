@@ -4,6 +4,7 @@ body {
     background-color: #191414;
     color:aliceblue;
     font-family: 'Noto Sans', sans-serif;
+    width: 500px;
 }
 
 .header {
@@ -11,4 +12,40 @@ body {
     flex-direction: row;
     align-items: center;
     gap: 10px;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.translatedLyricsSize {
+    font-size: 0.7em;
+    line-height: 0.7em;
+    width: 100%;
+    gap: 10px;
+
+}
+
+button, input {
+    background-color: #1DB954;
+    border: none;
+    color: white;
+    font-weight: bold;
+    height: 32px;
+    width: 100%;
+}
+
+button:hover, input:hover {
+    background-color: #1ED760;
+    cursor: pointer;
+}
+
+select {
+    border: none;
+    height: 32px;
+    width: 100%;
 }

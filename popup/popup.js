@@ -8,11 +8,19 @@ chrome.storage.local.get(['language'], (result) => {
 }
 );
 
-applyLanguageButton.addEventListener('click', () => {
+applyLanguageButton.addEventListener('click', async () => {
     const language = languageSelector.value;
     chrome.storage.local.set({language: language}).then(() => {
-        console.log("Language is set");
-        main();
+        console.log("Translatify: Language is set");
     });
+    
+
+    chrome.tabs.query({}, tabs => {
+        tabs.forEach(tab => {
+        chrome.tabs.sendMessage(tab.id, { updateLanguage: language });
+      });
+    });
+
+
     
 });

@@ -44,13 +44,17 @@ async function translateText(text,sourceLanguage,destinationLanguage) {
 }
 
 function getTranslatedLyricsToList(translatedLyrics) {
+    if (translatedLyrics == null) {
+        return null;
+    }
+    
     const translatedLyricsList = translatedLyrics.split(';');
     return translatedLyricsList;
 }
 
 function replaceLyrics(translatedLyricsList) {
     const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
-    if (lyricsWrapperList[0] != null) {
+    if (lyricsWrapperList[0] != null && translatedLyricsList != null) {
             const tag= document.createElement("div");
             tag.id="translated";
             lyricsWrapperList[0].appendChild(tag);
@@ -121,6 +125,16 @@ async function main() {
     
 }
 
+function refreshTranslation() {
+    const tag = document.getElementById("translated");
+    if (tag) {
+        tag.remove();
+        restoreLyrics();
+    }
+    main();
+}
+
+
 /*
 https://github.com/ssut/py-googletrans/issues/268
 // The URL to translate text is:
@@ -165,6 +179,3 @@ function translateLyrics() {
 }
 */
 
-eraseButton();
-loadChecker();
-console.log("Lyrics Translator is running..");
