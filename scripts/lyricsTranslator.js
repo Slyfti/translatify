@@ -140,8 +140,14 @@ async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage)
     const translationMap = new Map();
 
     // Tag to let know that the lyrics are translated
+
     const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
-    
+
+    if (lyricsWrapperList[0] == null) {
+        console.log("Lyrics not found: waiting..");
+        return setTimeout(translate, 100);
+    }
+
     const tag= document.createElement("div");
     tag.id="translated";
     lyricsWrapperList[0].appendChild(tag);
@@ -172,9 +178,10 @@ async function translate() {
 
 
     const translateButton = document.querySelector("button[data-testid='translate-button']");
+    const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
 
 
-    if (translateButton.getAttribute("aria-pressed") == "true" && document.getElementById("translated") == null ) {
+    if (translateButton.getAttribute("aria-pressed") == "true" && document.getElementById("translated") == null && lyricsButton.getAttribute("aria-pressed") == "true") {
         translateLineByLineWithGoogle(sourceLanguage,destinationLanguage);
     } else if (translateButton.getAttribute("aria-pressed") == "false" && document.getElementById("translated") != null) {
         restoreLyrics();
