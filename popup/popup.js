@@ -65,6 +65,8 @@ lyricsMode.addEventListener('change', async () => {
     const mode = lyricsMode.value;
     chrome.storage.local.set({lyricsMode: mode}).then(() => {
         console.log("Translatify: Change lyric mode");
+        newLyricsSize.value = chrome.storage.local.get(['newLyricsSize']);
+
     });
     
 
