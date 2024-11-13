@@ -1,7 +1,11 @@
 :root {
-    --newLyricsSize: 0.5em;
+    --newLyricsSize: 0.75em;
+    --newLyricsOpacity: 0.5;
+    --newLyricsLineHeight: 1em;
+
     --lyricsSize: 1em;
     --lyricsColor: #fff;
+    --lyricsDisplay : var(--lyricsDisplay);
 }
   
 
@@ -9,12 +13,18 @@
 .newLyrics {
     font-size: var(--newLyricsSize);
     margin-bottom: 10px;
-    opacity: 0.5;
-    line-height: 1em;
+    opacity: var(--newLyricsOpacity);
+    line-height: var(--newLyricsLineHeight);
 }
 
 .newLyrics:hover {
     opacity: 0.5;
+}
+
+.originalLyrics {
+    font-size: var(--lyricsSize);
+    display: var(--lyricsDisplay);
+    line-height: 1.5em;
 }
 
 .translateButton {

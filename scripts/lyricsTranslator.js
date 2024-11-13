@@ -141,6 +141,7 @@ async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage)
 
     // Tag to let know that the lyrics are translated
     const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    
     const tag= document.createElement("div");
     tag.id="translated";
     lyricsWrapperList[0].appendChild(tag);
