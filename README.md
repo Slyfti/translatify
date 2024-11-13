@@ -1,3 +1,4 @@
+![logo](images/icon-64.png) 
 # Translatify
 
 A Chrome and Mozilla extension that automatically translates lyrics displayed on Spotify into your preferred language.
