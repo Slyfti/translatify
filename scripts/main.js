@@ -2,14 +2,7 @@ eraseButton();
 loadChecker();
 console.log("Translatify: Lyrics Translator is running..");
 
-chrome.storage.local.get(['lyricsMode','newLyricsSize','language'], (result) => {
-
-
-    if (result.newLyricsSize) {
-        document.documentElement.style.setProperty('--newLyricsSize', result.newLyricsSize + 'em');
-        console.log("Translatify: Lyrics size updated!");
-        
-    }
+chrome.storage.local.get(['lyricsMode'], (result) => {
 
     if (result.lyricsMode) {
 
@@ -32,6 +25,14 @@ chrome.storage.local.get(['lyricsMode','newLyricsSize','language'], (result) => 
     }
 }
 );
+
+
+chrome.storage.local.get(['newLyricsSize'], (result) => {
+    if (result.newLyricsSize) {
+        document.documentElement.style.setProperty('--newLyricsSize', result.newLyricsSize + 'em');
+        console.log("Translatify: Lyrics size updated!");
+    }
+});
 
 
 chrome.runtime.onMessage.addListener(msgObj => {
