@@ -1,4 +1,4 @@
-# 🎵 Translatify
+# Translatify
 
 A Chrome and Mozilla extension that automatically translates lyrics displayed on Spotify into your preferred language.
 
@@ -118,18 +118,6 @@ We welcome contributions to **Translatify**! Here's how you can get involved:
 If you have any questions or need assistance:
 - Open an issue on the [issues page](https://github.com/slyfti/translatify/issues).
 - Join discussions in existing issues or Pull Requests.
-
----
-
-### 🤝 Code of Conduct
-
-By contributing, you agree to follow the project's [Code of Conduct](CODE_OF_CONDUCT.md). We strive to maintain a welcoming and collaborative community.
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
