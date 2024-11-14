@@ -6,7 +6,6 @@ const lyricsMode = document.getElementById('lyricsMode');
 chrome.storage.local.get(['language'], (result) => {
     if (result.language) {
         languageSelector.value = result.language;
-        
     }
 }
 );

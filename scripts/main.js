@@ -2,10 +2,11 @@ eraseButton();
 loadChecker();
 console.log("Translatify: Lyrics Translator is running..");
 
+// gets the option values from the extension storage
 chrome.storage.local.get(['lyricsMode'], (result) => {
 
+    // Apply the option values to the page
     if (result.lyricsMode) {
-
         if (result.lyricsMode == "replace") {
             document.documentElement.style.setProperty('--newLyricsSize', '1em');
             document.documentElement.style.setProperty("--lyricsDisplay", "none");
@@ -17,7 +18,6 @@ chrome.storage.local.get(['lyricsMode'], (result) => {
             document.documentElement.style.setProperty('--newLyricsSize', '0.75em');
             document.documentElement.style.setProperty("--lyricsDisplay", "block");
             document.documentElement.style.setProperty("--newLyricsLineHeight", "1em");
-
 
         }
         console.log("Translatify: Lyrics size updated!");
