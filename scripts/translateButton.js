@@ -1,3 +1,5 @@
+
+// Erases previous translation button
 function eraseButton() {
     const translationButton = document.querySelector("button[data-testid='translate-button']");
     if (translationButton) {
@@ -64,6 +66,7 @@ function setupListening() {
 
 }
 
+// Translates the lyrics
 function toggleTranslateButton() {
     const translateButton = document.querySelector("button[data-testid='translate-button']");
 

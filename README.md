@@ -3,6 +3,8 @@
 
 A Chrome and Mozilla extension that automatically translates lyrics displayed on Spotify into your preferred language.
 
+[Translatify is available on Mozilla Firefox !](https://addons.mozilla.org/en-US/firefox/addon/translatify-for-spotify/)
+
 ## 🚀 Features
 
 - Real-time translation of lyrics displayed in the Spotify Web Player.
