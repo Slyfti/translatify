@@ -7,14 +7,12 @@
     --lyricsColor: #fff;
     --lyricsDisplay : var(--lyricsDisplay);
 }
-  
-
 
 .newLyrics {
-    font-size: var(--newLyricsSize);
+    font-size: var(--newLyricsSize )!important;
     margin-bottom: 10px;
-    opacity: var(--newLyricsOpacity);
-    line-height: var(--newLyricsLineHeight);
+    opacity: var(--newLyricsOpacity) !important;
+    line-height: var(--newLyricsLineHeight) !important;
 }
 
 .newLyrics:hover {
@@ -22,9 +20,9 @@
 }
 
 .originalLyrics {
-    font-size: var(--lyricsSize);
-    display: var(--lyricsDisplay);
-    line-height: 1.5em;
+    font-size: var(--lyricsSize) !important;
+    display: var(--lyricsDisplay) !important;
+    line-height: 1.5em ;
 }
 
 .translateButton {
