@@ -19,6 +19,10 @@
     opacity: 0.5;
 }
 
+.EhKgYshvOwpSrTv399Mw > .newLyrics {
+    opacity: calc(var(--newLyricsOpacity) + 0.30) !important;
+}
+
 .originalLyrics {
     font-size: var(--lyricsSize) !important;
     display: var(--lyricsDisplay) !important;
