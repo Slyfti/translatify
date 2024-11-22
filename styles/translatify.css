@@ -8,11 +8,23 @@
     --lyricsDisplay : var(--lyricsDisplay);
 }
 
+@keyframes slidesInFromTop {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: var(--newLyricsOpacity) !important;
+    }
+}
+
 .newLyrics {
     font-size: var(--newLyricsSize )!important;
     margin-bottom: 10px;
     opacity: var(--newLyricsOpacity) !important;
     line-height: var(--newLyricsLineHeight) !important;
+    animation: 0.25s ease-in-out slidesInFromTop;
 }
 
 .newLyrics:hover {
