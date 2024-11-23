@@ -16,6 +16,7 @@ function loadChecker() {
 
     if (repeatButton && nowPlaying && lyricsButton && (lyricsButton.getAttribute("data-active") == "false" || lyricsWrapperList[0])) {
         addTranslateButton();
+        enableTranslateButton();
         setupListening();
 
         // Check if the translate button was enabled on previous session
