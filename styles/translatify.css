@@ -8,14 +8,16 @@
     --lyricsDisplay : var(--lyricsDisplay);
 }
 
-@keyframes slidesInFromTop {
+@keyframes slideIn {
     0% {
-        transform: translateY(100%);
+        transform: scale(0);
         opacity: 0;
+        max-height: 0px;
     }
     100% {
-        transform: translateY(0);
         opacity: var(--newLyricsOpacity) !important;
+        transform: scale(1);
+        max-height: 1000px;
     }
 }
 
@@ -24,7 +26,7 @@
     margin-bottom: 10px;
     opacity: var(--newLyricsOpacity) !important;
     line-height: var(--newLyricsLineHeight) !important;
-    animation: 0.25s ease-in-out slidesInFromTop;
+    animation: 0.25s ease-in-out slideIn;
 }
 
 .newLyrics:hover {
