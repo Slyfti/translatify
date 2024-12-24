@@ -17,8 +17,8 @@ A Chrome and Mozilla extension that automatically translates lyrics displayed on
 ---
 
 ## 📸 Preview
-<img src="images/promo/promo1.png" height="500" />
-<img src="images/promo/promo2.png" height="500" />
+<img src="https://github.com/Slyfti/translatify/blob/images/images/promo/promo1.png" height="500" />
+<img src="https://github.com/Slyfti/translatify/blob/images/images/promo/promo2.png" height="500" />
 ---
 
 ## 🛠️ Installation
