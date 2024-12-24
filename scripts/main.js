@@ -2,6 +2,29 @@ eraseButton();
 loadChecker();
 console.log("Translatify: Lyrics Translator is running..");
 
+// First install cases
+chrome.storage.local.get(['translateButton'], (result) => {
+    if (result.translateButton == null) {
+        chrome.storage.local.set({translateButton: true}, () => {
+            toggleTranslateButton();
+            console.log("Translatify: Translate button is enabled by default");
+        });
+    }
+}
+);
+chrome.storage.local.get(['language'], (result) => {
+    let defaultLanguage = navigator.language;
+    if (result.language == null) {
+        chrome.storage.local.set({language: defaultLanguage}, () => {
+            console.log("Translatify: Language is set to default");
+            refreshTranslation();
+        });
+    }
+}
+);
+
+
+
 // gets the option values from the extension storage
 chrome.storage.local.get(['lyricsMode'], (result) => {
 
