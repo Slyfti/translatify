@@ -24,7 +24,7 @@ function loadChecker() {
             if (result.translateButton) {
                 toggleTranslateButton();
             }
-          });
+        });
 
     } else {
         setTimeout(loadChecker, 100);

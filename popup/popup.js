@@ -3,9 +3,17 @@ const languageSelector = document.getElementById('languageSelector');
 const newLyricsSize = document.getElementById('newLyricsSize');
 const lyricsMode = document.getElementById('lyricsMode');
 
+$(document).ready(function() {
+    $('#languageSelector').select2();
+});
+
 chrome.storage.local.get(['language'], (result) => {
     if (result.language) {
         languageSelector.value = result.language;
+        $("#languageSelector").val(result.language).trigger("change"); // Changes the value of the select2
+        
+    } else {
+        $("#languageSelector").val("en").trigger('change'); // Changes the value of the select2
     }
 }
 );
@@ -76,3 +84,5 @@ lyricsMode.addEventListener('change', async () => {
     });
 
 });
+
+

@@ -53,7 +53,7 @@ button:hover, input:hover {
     transition: all 0.25s;
 }
 
-select {
+select, #languageSelector {
     border: none;
     height: 32px;
     width: 100%;
