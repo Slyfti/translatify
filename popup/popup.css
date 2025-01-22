@@ -31,7 +31,7 @@ h1 {
 }
 
 .optionDiv {
-    font-size: 0.7em;
+    font-size: 1em;
     line-height: 0.7em;
     width: 100%;
     gap: 10px;
@@ -58,5 +58,6 @@ select, #languageSelector {
     height: 32px;
     width: 100%;
     background-color: #333333;
+    outline: none;
     color: white;
 }

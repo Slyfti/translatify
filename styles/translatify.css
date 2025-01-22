@@ -50,6 +50,9 @@
     height: 32px;
     position: relative;
     width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .translateButton:focus-visible,.translateButton:hover {
@@ -89,4 +92,11 @@
     transform: translateX(-50%);
     width: 4px;
     inline-size: 4px!important;
+}
+
+.translateButton[disabled] {
+    cursor: not-allowed;
+    opacity: 0.3;
+    transform: scale(1);
+    color: var(--text-subdued, #656565);
 }

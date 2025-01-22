@@ -83,7 +83,6 @@ function toggleTranslateButton() {
     } else {
         translateButton.setAttribute("aria-pressed", "false");
         translateButton.classList.remove("hKhTmo");
-        translateButton.classList.remove("translateButton"); 
         translateButton.classList.remove("RK45o6dbvO1mb0wQtSwq"); 
         translateButton.classList.remove("fZjbVIqD8Xc3auRZOxu5");
         
