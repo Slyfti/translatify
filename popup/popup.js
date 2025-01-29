@@ -5,7 +5,16 @@ const lyricsMode = document.getElementById('lyricsMode');
 
 $(document).ready(function() {
     $('#languageSelector').select2();
+
+    $('body').on('click', 'a', function(){
+        chrome.tabs.create({url: $(this).attr('href')});
+        return false;
+      });
 });
+
+$(document).ready(function(){
+    
+ });
 
 chrome.storage.local.get(['language'], (result) => {
     if (result.language) {
