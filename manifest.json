@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Spotify Lyrics Translator - Translatify",
     "description": "Translate your favorite spotify songs lyrics to your language",
-    "version": "0.0.0.7",
+    "version": "0.0.0.8",
     "action": {
       "default_popup": "popup/popup.html",
       "default_icon": "images/icon-128.png"
