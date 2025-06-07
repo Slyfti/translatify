@@ -1,4 +1,3 @@
-
 // Erases previous translation button
 function eraseButton() {
     const translationButton = document.querySelector("button[data-testid='translate-button']");
@@ -120,3 +119,17 @@ function addTranslateButton() {
 
     translateButton.addEventListener('click', toggleTranslateButton);
 }
+
+// Listen for messages from popup
+chrome.runtime.onMessage.addListener(msgObj => {
+    if (msgObj.toggleTranslation !== undefined) {
+        const translateButton = document.querySelector("button[data-testid='translate-button']");
+        if (translateButton) {
+            const currentState = translateButton.getAttribute("aria-pressed") === "true";
+            if (currentState !== msgObj.toggleTranslation) {
+                // Toggle only if state is different
+                toggleTranslateButton();
+            }
+        }
+    }
+});

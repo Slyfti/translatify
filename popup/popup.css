@@ -8,11 +8,15 @@ body {
     background-color: #191414;
     color:aliceblue;
     font-family: 'Noto Sans', sans-serif;
-    width: 350px;
+    width: 400px;
 }
 
 h1 {
     color: #1db954;
+}
+
+h4 {
+    margin-top: 0em;
 }
 
 .header {
@@ -20,6 +24,16 @@ h1 {
     flex-direction: row;
     align-items: center;
     gap: 10px;
+}
+
+/* Add spacing for the links */
+.options > a {
+    margin-bottom: 5px;
+    text-decoration: none;
+}
+
+.options > a:hover {
+    text-decoration: underline;
 }
 
 .options {
@@ -33,8 +47,11 @@ h1 {
 .optionDiv {
     font-size: 1em;
     line-height: 0.7em;
-    width: 100%;
+    width: 90%;
     gap: 10px;
+    background: #221b1b;
+    border-radius: 8px;
+    padding: 26px 16px;
 
 }
 
@@ -72,7 +89,8 @@ select, #languageSelector {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin: 10px 0;
+    margin: 0;
+    margin-top: 10px;
 }
 
 .switch {
@@ -124,4 +142,72 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+/* Translation toggle icon styles */
+.translate-icon {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.translate-icon svg {
+    width: 32px;
+    height: 32px;
+    fill: #1db954;
+    transition: all 0.25s;
+}
+
+.translate-icon.disabled svg {
+    fill: #888;
+}
+
+/* Make the translate icon respond to toggle state */
+#translateToggle:not(:checked) ~ .translate-icon svg {
+    fill: #888;
+}
+
+/* Slider container with value display */
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.size-value {
+    min-width: 50px;
+    text-align: center;
+    background-color: #333333;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* Make the slider take up available space */
+.slider-container input[type="range"] {
+    flex-grow: 1;
+    width: auto;
+}
+
+/* Title with icon layout */
+.title-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.title-with-icon h4 {
+    margin: 0;
+}
+
+/* Smaller icon for inline display */
+.title-with-icon .translate-icon {
+    margin: 0;
+}
+
+.title-with-icon .translate-icon svg {
+    width: 24px;
+    height: 24px;
 }

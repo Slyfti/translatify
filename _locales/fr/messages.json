@@ -33,10 +33,26 @@
     },
     "toggleTip": {
         "message": "- 🎵 Activez le bouton de traduction dans la barre de contrôle du lecteur !",
-        "description": "Astuce pour l’activation"
+        "description": "Astuce pour l'activation"
     },
     "githubRepo": {
         "message": "Consultez le dépôt GitHub open source !",
         "description": "Dépôt GitHub"
+    },
+    "reviewLink": {
+        "message": "Laissez un avis !",
+        "description": "Lien pour laisser un avis sur le Chrome Web Store"
+    },
+    "translateToggle": {
+        "message": "Activer la Traduction",
+        "description": "Bascule pour activer/désactiver la traduction"
+    },
+    "translationOn": {
+        "message": "Activé",
+        "description": "État activé de la traduction"
+    },
+    "translationOff": {
+        "message": "Désactivé",
+        "description": "État désactivé de la traduction"
     }
 }

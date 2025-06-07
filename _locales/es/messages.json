@@ -38,5 +38,21 @@
     "githubRepo": {
         "message": "¡Revisa el repositorio de GitHub de código abierto!",
         "description": "Repositorio de GitHub"
+    },
+    "reviewLink": {
+        "message": "¡Deja una reseña!",
+        "description": "Enlace para dejar una reseña en la Chrome Web Store"
+    },
+    "translateToggle": {
+        "message": "Activar Traducción",
+        "description": "Interruptor para activar/desactivar la traducción"
+    },
+    "translationOn": {
+        "message": "Activado",
+        "description": "Estado activado de la traducción"
+    },
+    "translationOff": {
+        "message": "Desactivado",
+        "description": "Estado desactivado de la traducción"
     }
 }

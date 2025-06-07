@@ -39,5 +39,21 @@
     "githubRepo": {
         "message": "Check out the open source GitHub repo!",
         "description": "github repo"
+    },
+    "reviewLink": {
+        "message": "Leave a review!",
+        "description": "Chrome Web Store review link"
+    },
+    "translateToggle": {
+        "message": "Enable Translation",
+        "description": "Toggle for enabling/disabling translation"
+    },
+    "translationOn": {
+        "message": "On",
+        "description": "Translation toggle - on state"
+    },
+    "translationOff": {
+        "message": "Off",
+        "description": "Translation toggle - off state"
     }
 }

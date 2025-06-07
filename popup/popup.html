@@ -16,9 +16,29 @@
       <img src="../images/icon-64.png" width="64px" height="64px" alt="Logo">
       <h1>Translatify</h1>
     </div>
-    <a style="color:rgb(202, 255, 205)" href="https://github.com/Slyfti/translatify" data-locale="githubRepo">Check out the open source GitHub repo!</a>
+    
     <div class="optionDiv">
-      <h3 data-locale="targetLanguage">Target language translation</h3>
+      <div class="title-with-icon">
+        <h4 data-locale="translateToggle">Enable Translation</h4>
+        <div class="translate-icon">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
+          </svg>
+        </div>
+      </div>
+      <div class="toggle-container">
+        <span data-locale="translationOff">Off</span>
+        <label class="switch">
+          <input type="checkbox" id="translateToggle">
+          <span class="slider round"></span>
+        </label>
+        <span data-locale="translationOn">On</span>
+      </div>
+    </div>
+
+    <div class="optionDiv">
+      <h4 data-locale="targetLanguage">Target language translation</h4>
       <select name="languageSelector" id="languageSelector" value="en">
         <option value="af">Afrikaans (Afrikaans)</option>
         <option value="sq">Shqip (Albanian)</option>
@@ -155,11 +175,11 @@
         <option value="yo">Yorùbá (Yoruba)</option>
         <option value="zu">isiZulu (Zulu)</option>
     </select>
-    <button id="applyLanguage" >Apply language selection</button>
+    <button id="applyLanguage" data-locale="applyLanguage">Apply language selection</button>
   </div>
-  <span style="color:rgb(255, 230, 202); font-size:1em" data-locale="toggleTip">- 🎵 Toggle the translation button on the player control bar! </span>
+  <!-- <span style="color:rgb(255, 230, 202); font-size:1em" data-locale="toggleTip">- 🎵 Toggle the translation button on the player control bar! </span> !-->
   <div class="optionDiv">
-    <h3 data-locale="lyricsMode">Lyrics mode</h3>
+    <h4 data-locale="lyricsMode">Lyrics mode</h4>
     <select name="lyricsMode" id="lyricsMode">
       <option value="along" data-locale="along">Translated lyrics along original</option>
       <option value="replace" data-locale="replace">Replace lyrics with translation</option>
@@ -168,9 +188,12 @@
 
 
   <div class = "optionDiv">
-    <h3 data-locale="lyricsSize">Font size of translated lyrics</h3>
-    <input type="range" id="newLyricsSize" list="tickmarks" min="0.25" max="2" step="0.05">
-      <datalist id="tickmarks">
+    <h4 data-locale="lyricsSize">Font size of translated lyrics</h4>
+    <div class="slider-container">
+      <input type="range" id="newLyricsSize" list="tickmarks" min="0.25" max="2" step="0.05">
+      <span id="lyricsSizeValue" class="size-value">1em</span>
+    </div>
+    <datalist id="tickmarks">
       <option value="0.25"></option>
       <option value="0.5"></option>
       <option value="0.75"></option>
@@ -179,11 +202,11 @@
       <option value="1.5"></option>
       <option value="1.75"></option>
       <option value="2"></option>
-      </datalist>
-    </div>
+    </datalist>
+  </div>
 
   <div class="optionDiv">
-    <h3 data-locale="uiLocalization">UI Localization</h3>
+    <h4 data-locale="uiLocalization">UI Localization</h4>
     <div class="toggle-container">
       <span data-locale="localizationOff">Off</span>
       <label class="switch">
@@ -193,6 +216,13 @@
       <span data-locale="localizationOn">On</span>
     </div>
   </div>
+
+  <a style="color:rgb(202, 255, 205)" href="https://github.com/Slyfti/translatify" data-locale="githubRepo">Check out the
+    open source GitHub repo!</a>
+  <a style="color:rgb(255, 213, 143)"
+    href="https://chromewebstore.google.com/detail/spotify-lyrics-translator/odglneiicjonedgaldglaalgagkhanmi/reviews"
+    data-locale="reviewLink">Leave a review !</a>
+
 
   </div>
     <script src="localize.js"></script>
