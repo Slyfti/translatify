@@ -1,0 +1,43 @@
+{
+
+    "extName": {
+        "message": "Spotify Lyrics Translator - Translatify",
+        "description": "Extension name"
+    },
+    "extDesc": {
+        "message": "Translate your favorite spotify songs lyrics to your language",
+        "description": "Extension description"
+    },
+    "targetLanguage": {
+        "message": "Target language",
+        "description": "Target language"
+    },
+    "applyLanguage": {
+        "message": "Apply language selection",
+        "description": "Apply language selection"
+    },
+    "lyricsMode": {
+        "message": "Lyrics mode",
+        "description": "Lyrics mode"
+    },
+    "along": {
+        "message": "Show translated lyrics along original",
+        "description": "Show translated lyrics along original"
+    },
+    "replace": {
+        "message": "Replace lyrics with translation",
+        "description": "Replace lyrics with translation"
+    },
+    "lyricsSize": {
+        "message": "Font size of translated lyrics",
+        "description": "Font size of translated lyrics"
+    },
+    "toggleTip" : {
+        "message" : "- 🎵 Toggle the translation button on the player control bar! ",
+        "description" : "toggle tip"
+    },
+    "githubRepo": {
+        "message": "Check out the open source GitHub repo!",
+        "description": "github repo"
+    }
+}

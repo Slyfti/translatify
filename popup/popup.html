@@ -16,9 +16,9 @@
       <img src="../images/icon-64.png" width="64px" height="64px" alt="Logo">
       <h1>Translatify</h1>
     </div>
-    <a style="color:rgb(202, 255, 205)" href="https://github.com/Slyfti/translatify">Check out the open source GitHub repo!</a>
+    <a style="color:rgb(202, 255, 205)" href="https://github.com/Slyfti/translatify" data-locale="githubRepo">Check out the open source GitHub repo!</a>
     <div class="optionDiv">
-      <h3>Target language translation</h3>
+      <h3 data-locale="targetLanguage">Target language translation</h3>
       <select name="languageSelector" id="languageSelector" value="en">
         <option value="af">Afrikaans (Afrikaans)</option>
         <option value="sq">Shqip (Albanian)</option>
@@ -155,20 +155,20 @@
         <option value="yo">Yorùbá (Yoruba)</option>
         <option value="zu">isiZulu (Zulu)</option>
     </select>
-    <button id="applyLanguage">Apply language</button>
+    <button id="applyLanguage" >Apply language selection</button>
   </div>
-  <span style="color:rgb(255, 230, 202); font-size:1em">- 🎵 Toggle the translation button on the player control bar! </span>
+  <span style="color:rgb(255, 230, 202); font-size:1em" data-locale="toggleTip">- 🎵 Toggle the translation button on the player control bar! </span>
   <div class="optionDiv">
-    <h3>Lyrics mode</h3>
+    <h3 data-locale="lyricsMode">Lyrics mode</h3>
     <select name="lyricsMode" id="lyricsMode">
-      <option value="along">Translated lyrics along original</option>
-      <option value="replace">Replace translated lyrics</option>
+      <option value="along" data-locale="along">Translated lyrics along original</option>
+      <option value="replace" data-locale="replace">Replace lyrics with translation</option>
     </select>
   </div>
 
 
   <div class = "optionDiv">
-    <h3>Size of translated lyrics</h3>
+    <h3 data-locale="lyricsSize">Font size of translated lyrics</h3>
     <input type="range" id="newLyricsSize" list="tickmarks" min="0.25" max="2" step="0.05">
       <datalist id="tickmarks">
       <option value="0.25"></option>
@@ -182,7 +182,20 @@
       </datalist>
     </div>
 
+  <div class="optionDiv">
+    <h3 data-locale="uiLocalization">UI Localization</h3>
+    <div class="toggle-container">
+      <span data-locale="localizationOff">Off</span>
+      <label class="switch">
+        <input type="checkbox" id="localizationToggle">
+        <span class="slider round"></span>
+      </label>
+      <span data-locale="localizationOn">On</span>
+    </div>
   </div>
+
+  </div>
+    <script src="localize.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

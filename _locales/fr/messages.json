@@ -1,0 +1,42 @@
+{
+    "extName": {
+        "message": "Traducteur de Paroles Spotify - Translatify",
+        "description": "Nom de l’extension"
+    },
+    "extDesc": {
+        "message": "Traduisez les paroles de vos chansons Spotify préférées !",
+        "description": "Description de l’extension"
+    },
+    "targetLanguage": {
+        "message": "Langue cible",
+        "description": "Langue cible"
+    },
+    "applyLanguage": {
+        "message": "Appliquer la sélection de langue",
+        "description": "Appliquer la sélection de langue"
+    },
+    "lyricsMode": {
+        "message": "Mode d'affichage des paroles",
+        "description": "Mode d'affichage des paroles"
+    },
+    "along": {
+        "message": "Afficher les paroles traduites avec les originales",
+        "description": "Afficher les paroles traduites avec les originales"
+    },
+    "replace": {
+        "message": "Remplacer les paroles par la traduction",
+        "description": "Remplacer les paroles par la traduction"
+    },
+    "lyricsSize": {
+        "message": "Taille de la police des paroles traduites",
+        "description": "Taille de la police des paroles traduites"
+    },
+    "toggleTip": {
+        "message": "- 🎵 Activez le bouton de traduction dans la barre de contrôle du lecteur !",
+        "description": "Astuce pour l’activation"
+    },
+    "githubRepo": {
+        "message": "Consultez le dépôt GitHub open source !",
+        "description": "Dépôt GitHub"
+    }
+}

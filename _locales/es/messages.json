@@ -1,0 +1,42 @@
+{
+    "extName": {
+        "message": "Traductor de Letras de Spotify - Translatify",
+        "description": "Nombre de la extensión"
+    },
+    "extDesc": {
+        "message": "Traduce las letras de tus canciones favoritas de Spotify a tu idioma",
+        "description": "Descripción de la extensión"
+    },
+    "targetLanguage": {
+        "message": "Idioma de destino",
+        "description": "Idioma de destino"
+    },
+    "applyLanguage": {
+        "message": "Aplicar selección de idioma",
+        "description": "Aplicar selección de idioma"
+    },
+    "lyricsMode": {
+        "message": "Modo de visualización de letras",
+        "description": "Modo de visualización de letras"
+    },
+    "along": {
+        "message": "Mostrar letras traducidas junto a las originales",
+        "description": "Mostrar letras traducidas junto a las originales"
+    },
+    "replace": {
+        "message": "Reemplazar letras con la traducción",
+        "description": "Reemplazar letras con la traducción"
+    },
+    "lyricsSize": {
+        "message": "Tamaño de fuente de las letras traducidas",
+        "description": "Tamaño de fuente de las letras traducidas"
+    },
+    "toggleTip": {
+        "message": "- 🎵 ¡Activa el botón de traducción en la barra de control del reproductor!",
+        "description": "Consejo sobre cómo activar"
+    },
+    "githubRepo": {
+        "message": "¡Revisa el repositorio de GitHub de código abierto!",
+        "description": "Repositorio de GitHub"
+    }
+}
