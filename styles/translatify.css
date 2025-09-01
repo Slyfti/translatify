@@ -56,7 +56,8 @@
 }
 
 .translateButton:focus-visible,.translateButton:hover {
-    color: #fff
+    color: #fff;
+    cursor: pointer;
 }
 
 .translateButton:focus-visible:active,.translateButton:hover:active {
