@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "Translatify - Traduzir letras do Spotify",
+        "description": "Nome da extensão"
+    },
+    "extDesc": {
+        "message": "Traduza instantaneamente letras do Spotify para seu idioma enquanto ouve. Suporte multilíngue em tempo real e integração perfeita com o Spotify Web Player.",
+        "description": "Descrição da extensão"
+    },
+    "targetLanguage": {
+        "message": "Idioma de destino",
+        "description": "Idioma de destino"
+    },
+    "applyLanguage": {
+        "message": "Aplicar seleção de idioma",
+        "description": "Aplicar seleção de idioma"
+    },
+    "lyricsMode": {
+        "message": "Modo de letras",
+        "description": "Modo de letras"
+    },
+    "along": {
+        "message": "Mostrar letras traduzidas junto com as originais",
+        "description": "Mostrar letras traduzidas junto com as originais"
+    },
+    "replace": {
+        "message": "Substituir letras pela tradução",
+        "description": "Substituir letras pela tradução"
+    },
+    "lyricsSize": {
+        "message": "Tamanho da fonte das letras traduzidas",
+        "description": "Tamanho da fonte das letras traduzidas"
+    },
+    "toggleTip": {
+        "message": "- 🎵 Ative o botão de tradução na barra de controle do player!",
+        "description": "Dica de botão de tradução"
+    },
+    "githubRepo": {
+        "message": "Confira o repositório de código aberto no GitHub!",
+        "description": "Repositório GitHub"
+    },
+    "reviewLink": {
+        "message": "★ Deixe uma avaliação!",
+        "description": "Link para avaliação"
+    },
+    "translateToggle": {
+        "message": "Ativar tradução",
+        "description": "Alternar tradução"
+    },
+    "translationOn": {
+        "message": "Ligado",
+        "description": "Tradução ativada"
+    },
+    "translationOff": {
+        "message": "Desligado",
+        "description": "Tradução desativada"
+    }
+}

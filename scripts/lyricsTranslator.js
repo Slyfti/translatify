@@ -133,6 +133,14 @@ async function replaceLyricAsync(translatedLine, index) {
         
     }
 
+    let focusedLyrics = document.querySelector(".EhKgYshvOwpSrTv399Mw");
+    focusedLyrics.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center"
+    });
+    console.log(focusedLyrics)
+
 }
 
 
@@ -160,11 +168,22 @@ async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage)
     const lyricsList = getLyrics();
     let translatedLyricsList = new Array();
     if (lyricsList) {
-        lyricsList.forEach(async (lyrics, index) => {
-            let translatedLine = await translateText(lyrics,sourceLanguage,destinationLanguage);
-            replaceLyricAsync(translatedLine,index);
+        const promises = lyricsList.map(async (lyrics, index) => {
+            let translatedLine = await translateText(lyrics, sourceLanguage, destinationLanguage);
+            await replaceLyricAsync(translatedLine, index);
+        });
+        await Promise.all(promises);
+
+        // Focus active lyrics
+        let focusedLyrics = document.querySelector(".EhKgYshvOwpSrTv399Mw");
+        focusedLyrics.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center"
         });
     }
+
+    
 }
 
 
@@ -185,6 +204,14 @@ async function translate() {
         translateLineByLineWithGoogle(sourceLanguage,destinationLanguage);
     } else if (translateButton.getAttribute("aria-pressed") == "false" && document.getElementById("translated") != null) {
         restoreLyrics();
+        
+        // Focus active lyrics
+        let focusedLyrics = document.querySelector(".EhKgYshvOwpSrTv399Mw");
+        focusedLyrics.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center"
+        });
     }
     
 }

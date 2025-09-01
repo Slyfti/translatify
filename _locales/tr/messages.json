@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "Translatify - Spotify Şarkı Sözlerini Çevir",
+        "description": "Uzantı adı"
+    },
+    "extDesc": {
+        "message": "Spotify şarkı sözlerini dinlerken anında kendi dilinize çevirin. Gerçek zamanlı çok dilli destek ve Spotify Web Player ile sorunsuz entegrasyon.",
+        "description": "Uzantı açıklaması"
+    },
+    "targetLanguage": {
+        "message": "Hedef dil",
+        "description": "Hedef dil"
+    },
+    "applyLanguage": {
+        "message": "Dil seçimini uygula",
+        "description": "Dil seçimini uygula"
+    },
+    "lyricsMode": {
+        "message": "Şarkı sözü modu",
+        "description": "Şarkı sözü modu"
+    },
+    "along": {
+        "message": "Çeviriyle birlikte orijinal sözleri göster",
+        "description": "Çeviriyle birlikte orijinal sözleri göster"
+    },
+    "replace": {
+        "message": "Şarkı sözlerini çeviriyle değiştir",
+        "description": "Şarkı sözlerini çeviriyle değiştir"
+    },
+    "lyricsSize": {
+        "message": "Çevirilen sözlerin yazı tipi boyutu",
+        "description": "Çevirilen sözlerin yazı tipi boyutu"
+    },
+    "toggleTip": {
+        "message": "- 🎵 Çeviri düğmesini oynatıcı kontrol çubuğunda aç!",
+        "description": "Çeviri ipucu"
+    },
+    "githubRepo": {
+        "message": "GitHub açık kaynak deposunu incele!",
+        "description": "GitHub deposu"
+    },
+    "reviewLink": {
+        "message": "★ Bir inceleme bırak!",
+        "description": "İnceleme bağlantısı"
+    },
+    "translateToggle": {
+        "message": "Çeviriyi Etkinleştir",
+        "description": "Çeviri etkinleştirme/durdurma düğmesi"
+    },
+    "translationOn": {
+        "message": "Açık",
+        "description": "Çeviri açık durumu"
+    },
+    "translationOff": {
+        "message": "Kapalı",
+        "description": "Çeviri kapalı durumu"
+    }
+}

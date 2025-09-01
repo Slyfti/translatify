@@ -1,11 +1,11 @@
 {
 
     "extName": {
-        "message": "Spotify Lyrics Translator - Translatify",
+        "message": "Translatify - Translate Spotify Lyrics",
         "description": "Extension name"
     },
     "extDesc": {
-        "message": "Translate your favorite spotify songs lyrics to your language",
+        "message": "Instantly translate Spotify lyrics into your language while listening. Real-time multilingual support and seamless integration with Spotify Web Player.",
         "description": "Extension description"
     },
     "targetLanguage": {
@@ -41,7 +41,7 @@
         "description": "github repo"
     },
     "reviewLink": {
-        "message": "Leave a review!",
+        "message": "★ Please leave a review!",
         "description": "Chrome Web Store review link"
     },
     "translateToggle": {

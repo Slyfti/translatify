@@ -69,6 +69,7 @@ function setupListening() {
 // Translates the lyrics
 function toggleTranslateButton() {
     const translateButton = document.querySelector("button[data-testid='translate-button']");
+    
 
     if (translateButton.getAttribute("aria-pressed") == "false") {
         translateButton.setAttribute("aria-pressed", "true");
