@@ -4,8 +4,8 @@
         "description": "Nama ekstensi"
     },
     "extDesc": {
-        "message": "Terjemahkan lirik Spotify secara instan ke dalam bahasa Anda saat mendengarkan. Dukungan multibahasa waktu nyata dan integrasi mulus dengan Spotify Web Player.",
-        "description": "Deskripsi ekstensi"
+        "message": "Terjemahkan lirik Spotify secara instan ke dalam bahasa Anda secara real-time.",
+        "description": "Extension description"
     },
     "targetLanguage": {
         "message": "Bahasa tujuan",

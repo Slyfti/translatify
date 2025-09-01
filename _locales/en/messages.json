@@ -5,7 +5,7 @@
         "description": "Extension name"
     },
     "extDesc": {
-        "message": "Instantly translate Spotify lyrics into your language while listening. Real-time multilingual support and seamless integration with Spotify Web Player.",
+        "message": "Instantly translate Spotify lyrics into your language in real-time.",
         "description": "Extension description"
     },
     "targetLanguage": {

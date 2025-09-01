@@ -4,7 +4,7 @@
         "description": "Nome da extensão"
     },
     "extDesc": {
-        "message": "Traduza instantaneamente letras do Spotify para seu idioma enquanto ouve. Suporte multilíngue em tempo real e integração perfeita com o Spotify Web Player.",
+        "message": "Traduza instantaneamente letras do Spotify para seu idioma em tempo real.",
         "description": "Descrição da extensão"
     },
     "targetLanguage": {

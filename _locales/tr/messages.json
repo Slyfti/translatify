@@ -4,7 +4,7 @@
         "description": "Uzantı adı"
     },
     "extDesc": {
-        "message": "Spotify şarkı sözlerini dinlerken anında kendi dilinize çevirin. Gerçek zamanlı çok dilli destek ve Spotify Web Player ile sorunsuz entegrasyon.",
+        "message": "Spotify şarkı sözlerini anında kendi dilinize gerçek zamanlı çevirin.",
         "description": "Uzantı açıklaması"
     },
     "targetLanguage": {
