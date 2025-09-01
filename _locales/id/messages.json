@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "Translatify - Terjemahkan Lirik Spotify",
+        "description": "Nama ekstensi"
+    },
+    "extDesc": {
+        "message": "Terjemahkan lirik Spotify secara instan ke dalam bahasa Anda saat mendengarkan. Dukungan multibahasa waktu nyata dan integrasi mulus dengan Spotify Web Player.",
+        "description": "Deskripsi ekstensi"
+    },
+    "targetLanguage": {
+        "message": "Bahasa tujuan",
+        "description": "Bahasa tujuan"
+    },
+    "applyLanguage": {
+        "message": "Terapkan pilihan bahasa",
+        "description": "Terapkan pilihan bahasa"
+    },
+    "lyricsMode": {
+        "message": "Mode lirik",
+        "description": "Mode lirik"
+    },
+    "along": {
+        "message": "Tampilkan lirik terjemahan bersama yang asli",
+        "description": "Tampilkan lirik terjemahan bersama yang asli"
+    },
+    "replace": {
+        "message": "Gantikan lirik dengan terjemahan",
+        "description": "Gantikan lirik dengan terjemahan"
+    },
+    "lyricsSize": {
+        "message": "Ukuran font lirik terjemahan",
+        "description": "Ukuran font lirik terjemahan"
+    },
+    "toggleTip": {
+        "message": "- 🎵 Aktifkan tombol terjemahan di bilah kontrol pemutar!",
+        "description": "Tip tombol terjemahan"
+    },
+    "githubRepo": {
+        "message": "Lihat repositori GitHub sumber terbuka!",
+        "description": "Repositori GitHub"
+    },
+    "reviewLink": {
+        "message": "★ Tinggalkan ulasan!",
+        "description": "Tautan ulasan"
+    },
+    "translateToggle": {
+        "message": "Aktifkan Terjemahan",
+        "description": "Tombol aktif/nonaktif terjemahan"
+    },
+    "translationOn": {
+        "message": "Aktif",
+        "description": "Terjemahan aktif"
+    },
+    "translationOff": {
+        "message": "Nonaktif",
+        "description": "Terjemahan nonaktif"
+    }
+}

@@ -1,11 +1,11 @@
 {
     "extName": {
-        "message": "Traducteur de Paroles Spotify - Translatify",
-        "description": "Nom de l’extension"
+        "message": "Translatify - Traduire les paroles Spotify",
+        "description": "Extension name"
     },
     "extDesc": {
-        "message": "Traduisez les paroles de vos chansons Spotify préférées !",
-        "description": "Description de l’extension"
+        "message": "Traduisez instantanément les paroles de Spotify dans votre langue pendant l'écoute. Prise en charge multilingue en temps réel et intégration transparente avec Spotify Web Player.",
+        "description": "Extension description"
     },
     "targetLanguage": {
         "message": "Langue cible",
@@ -40,7 +40,7 @@
         "description": "Dépôt GitHub"
     },
     "reviewLink": {
-        "message": "Laissez un avis !",
+        "message": "★ Laissez un avis !",
         "description": "Lien pour laisser un avis sur le Chrome Web Store"
     },
     "translateToggle": {

@@ -1,11 +1,11 @@
 {
     "extName": {
-        "message": "Traductor de Letras de Spotify - Translatify",
-        "description": "Nombre de la extensión"
+        "message": "Translatify - Traduce letras de Spotify",
+        "description": "Extension name"
     },
     "extDesc": {
-        "message": "Traduce las letras de tus canciones favoritas de Spotify a tu idioma",
-        "description": "Descripción de la extensión"
+        "message": "Traduce al instante las letras de Spotify a tu idioma mientras escuchas. Soporte multilingüe en tiempo real e integración perfecta con Spotify Web Player.",
+        "description": "Extension description"
     },
     "targetLanguage": {
         "message": "Idioma de destino",
@@ -40,7 +40,7 @@
         "description": "Repositorio de GitHub"
     },
     "reviewLink": {
-        "message": "¡Deja una reseña!",
+        "message": "★ ¡Deja una reseña!",
         "description": "Enlace para dejar una reseña en la Chrome Web Store"
     },
     "translateToggle": {
