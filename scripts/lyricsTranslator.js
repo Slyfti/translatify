@@ -18,7 +18,7 @@ async function translateText(text,sourceLanguage,destinationLanguage) {
 }
 
 function restoreLyrics() {
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
     if (lyricsWrapperList) {
         lyricsWrapperList.forEach((lyricsWrapper, index) => {
             lyricsWrapper.classList.remove("modifedLyricsWrapper");
@@ -66,7 +66,7 @@ function getTranslatedLyricsToList(translatedLyrics) {
 }
 
 function replaceLyrics(translatedLyricsList) {
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
     if (lyricsWrapperList[0] != null && translatedLyricsList != null) {
             const tag= document.createElement("div");
             tag.id="translated";
@@ -104,7 +104,7 @@ async function translateAllWithGoogle(sourceLanguage,destinationLanguage) {
 // 2ND METHOD
 
 function getLyrics() {
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
     const lyricsList = [];
     if (lyricsWrapperList) {
         lyricsWrapperList.forEach((lyricsWrapper) => {
@@ -116,7 +116,7 @@ function getLyrics() {
 }
 
 async function replaceLyricAsync(translatedLine, index) {
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
     if (lyricsWrapperList[0] != null && translatedLine != null) {
             const lyricsWrapper = lyricsWrapperList[index];
 
@@ -149,7 +149,7 @@ async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage)
 
     // Tag to let know that the lyrics are translated
 
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
 
     if (lyricsWrapperList[0] == null) {
         console.log("Lyrics not found: waiting..");

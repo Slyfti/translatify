@@ -11,7 +11,7 @@ function loadChecker() {
     var repeatButton = document.querySelector("button[data-testid='control-button-repeat']");
     var nowPlaying = document.querySelector("div[data-testid='now-playing-widget']");
     var lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
-    var lyricsWrapperList = document.querySelectorAll("div[data-testid='fullscreen-lyric']");
+    var lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
 
     if (repeatButton && nowPlaying && lyricsButton && (lyricsButton.getAttribute("data-active") == "false" || lyricsWrapperList[0])) {
         addTranslateButton();
