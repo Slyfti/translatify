@@ -30,6 +30,36 @@ function loadChecker() {
     }
 }
 
+// Handle song changes when nowPlaying widget updates
+async function handleSongChange() {
+    // First, restore any existing translations
+    const tag = document.getElementById("translated");
+    if (tag) {
+        restoreLyrics();
+    }
+    
+    // Then wait for lyrics to load before translating
+    await waitForLyricsAndTranslate();
+}
+
+// Wait for lyrics to load before attempting translation
+async function waitForLyricsAndTranslate() {
+    const translateButton = document.querySelector("button[data-testid='translate-button']");
+    const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
+    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
+    
+    // Check if translation is enabled and lyrics are available
+    if (translateButton && translateButton.getAttribute("aria-pressed") === "true") {
+        if (lyricsButton && lyricsButton.getAttribute("aria-pressed") === "true" && lyricsWrapperList.length > 0) {
+            // Lyrics are loaded and visible, translate them
+            await translate();
+        } else {
+            // Lyrics not ready yet, check again in 100ms
+            setTimeout(waitForLyricsAndTranslate, 100);
+        }
+    }
+}
+
 // Sets up all the event listeners
 function setupListening() {
     const buttonList = document.querySelectorAll("button");
@@ -47,8 +77,8 @@ function setupListening() {
     
     // Listen for changes in the now playing widget
     var nowPlayingObserver = new MutationObserver(function(mutationsList, nowPlayingObserver) {
-        setTimeout(translate, 100);
         console.log('Translatify: Next music');
+        handleSongChange();
     });
     nowPlayingObserver.observe(nowPlaying, { attributes: true});
 
