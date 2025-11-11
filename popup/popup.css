@@ -8,7 +8,8 @@ body {
     background-color: #191414;
     color:aliceblue;
     font-family: 'Noto Sans', sans-serif;
-    width: 400px;
+    width: 350px;
+    font-weight: normal;
 }
 
 h1 {
@@ -47,36 +48,50 @@ h4 {
 .optionDiv {
     font-size: 1em;
     line-height: 0.7em;
-    width: 90%;
+    width: 85%;
     gap: 10px;
     background: #221b1b;
     border-radius: 8px;
-    padding: 26px 16px;
-
+    padding: 20px 16px 26px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-button, input {
+
+button, input, .buttonLink {
+    display: block;
+    text-align: center;
     background-color: white;
     border: none;
     color: black;
-    font-weight: bold;
     height: 32px;
     width: 100%;
+    border-radius: 4px;
 }
 
-button:hover, input:hover {
+button:hover, input:hover, .buttonLink:hover {
     background-color: #1ED760;
     cursor: pointer;
     transition: all 0.25s;
 }
 
-select, #languageSelector {
+.buttonLink {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+select, #languageSelector, #lyricsMode {
     border: none;
     height: 32px;
     width: 100%;
-    background-color: #333333;
     outline: none;
-    color: white;
+
+}
+
+.selectOptions {
+    background-color: #191414 !important;
+    color: #1db954 !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
 }
 
 #applyLanguage {
@@ -144,17 +159,33 @@ input:checked + .slider:before {
     border-radius: 50%;
 }
 
+/** Green slider styles */
+input[type='range'] {
+    accent-color: #1db954;
+}
+
+
 /* Translation toggle icon styles */
 .translate-icon {
+    position: relative;
+}
+
+h4 {
     display: flex;
-    justify-content: center;
-    margin-top: 10px;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+h4 svg {
+    width: 1.25em;
+    height: 1.25em;
+    fill: #ffffff;
 }
 
 .translate-icon svg {
     width: 32px;
     height: 32px;
-    fill: #1db954;
+    fill: #ffffff;
     transition: all 0.25s;
 }
 
@@ -195,7 +226,7 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 1.25em;
 }
 
 .title-with-icon h4 {

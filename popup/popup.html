@@ -1,12 +1,12 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="popup.css">
-    <!-- UTF8 compatiblity-->
-     <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-     <script src="jquery-3.7.1.min.js"></script>
-     <link href="select2/css/select2.css" rel="stylesheet" />
-     <script src="select2/js/select2.min.js"></script>
+    <script src="jquery-3.7.1.min.js"></script>
+    <link href="select2/css/select2.css" rel="stylesheet" />
+    <script src="select2/js/select2.min.js"></script>
+    <script async defer src="buttons.js"></script>
 
   </head>
   <body>
@@ -16,17 +16,30 @@
       <img src="../images/icon-64.png" width="64px" height="64px" alt="Logo">
       <h1>Translatify</h1>
     </div>
+    <!-- GITHUB BUTTONS -->
+    <div>
+      <a class="github-button" href="https://github.com/Slyfti"
+        data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
+        aria-label="Follow @Slyfti on GitHub">Follow @Slyfti
+      </a>
+      <a class="github-button" href="https://github.com/Slyfti/translatify"
+        data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large"
+        data-show-count="true" aria-label="Star Slyfti/translatify on GitHub">Star
+      </a>
+      <a class="github-button" href="https://github.com/Slyfti/translatify/issues"
+        data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-issue-opened" data-size="large"
+        data-show-count="true" aria-label="Issue Slyfti/translatify on GitHub">Issue
+      </a>
+      
+    </div>
     
     <div class="optionDiv">
-      <div class="title-with-icon">
-        <h4 data-locale="translateToggle">Enable Translation</h4>
-        <div class="translate-icon">
-          <svg viewBox="0 0 24 24">
-            <path
-              d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
-          </svg>
-        </div>
-      </div>
+        <h4 data-locale="translateToggle">Lyrics translation
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
+        </svg>
+        </h4>
       <div class="toggle-container">
         <span data-locale="translationOff">Off</span>
         <label class="switch">
@@ -38,8 +51,8 @@
     </div>
 
     <div class="optionDiv">
-      <h4 data-locale="targetLanguage">Target language translation</h4>
-      <select name="languageSelector" id="languageSelector" value="en">
+      <h4 data-locale="targetLanguage">Target language</h4>
+      <select name="languageSelector" id="languageSelector" value="en" class="selectOptions">
         <option value="af">Afrikaans (Afrikaans)</option>
         <option value="sq">Shqip (Albanian)</option>
         <option value="am">አማርኛ (Amharic)</option>
@@ -180,7 +193,7 @@
   <!-- <span style="color:rgb(255, 230, 202); font-size:1em" data-locale="toggleTip">- 🎵 Toggle the translation button on the player control bar! </span> !-->
   <div class="optionDiv">
     <h4 data-locale="lyricsMode">Lyrics mode</h4>
-    <select name="lyricsMode" id="lyricsMode">
+    <select name="lyricsMode" id="lyricsMode" class="selectOptions">
       <option value="along" data-locale="along">Translated lyrics along original</option>
       <option value="replace" data-locale="replace">Replace lyrics with translation</option>
     </select>
@@ -217,14 +230,12 @@
     </div>
   </div>
 
-  <a style="color:rgb(255, 213, 143)"
-    href="https://chromewebstore.google.com/detail/spotify-lyrics-translator/odglneiicjonedgaldglaalgagkhanmi/reviews"
-    data-locale="reviewLink">Please leave a review !
-  </a>
-
-  <a style="color:rgb(202, 255, 205)" href="https://github.com/Slyfti/translatify" data-locale="githubRepo">Check out the
-    open source GitHub repo!
-  </a>
+  <div class="optionDiv">
+    <h4 data-locale="reviewTitle">Review</h4>
+    <a href= "https://chromewebstore.google.com/detail/spotify-lyrics-translator/odglneiicjonedgaldglaalgagkhanmi/reviews">
+      <button data-locale="reviewLink">Please leave a review !</button>
+    </a>
+  </div>
 
   </div>
     <script src="localize.js"></script>
