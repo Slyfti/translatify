@@ -1,7 +1,7 @@
 :root {
     --newLyricsSize: 0.75em;
     --newLyricsOpacity: 0.5;
-    --newLyricsLineHeight: 1em;
+    --newLyricsLineHeight: normal;
 
     --lyricsSize: 1em;
     --lyricsColor: #fff;
@@ -39,7 +39,6 @@
 .originalLyrics {
     font-size: var(--lyricsSize) !important;
     display: var(--lyricsDisplay) !important;
-    line-height: 1.5em;
 }
 
 .translateButton {
