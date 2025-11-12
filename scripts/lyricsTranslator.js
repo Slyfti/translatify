@@ -117,9 +117,8 @@ function getLyrics() {
 
 async function replaceLyricAsync(translatedLine, index) {
     const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
-    if (lyricsWrapperList[0] != null && translatedLine != null) {
-            const lyricsWrapper = lyricsWrapperList[index];
-
+    const lyricsWrapper = lyricsWrapperList[index];
+    if (lyricsWrapperList[0] != null && translatedLine != null && lyricsWrapper.classList.contains("modifedLyricsWrapper") == false) {
             lyricsWrapper.classList.add("modifedLyricsWrapper");
             const lyrics = lyricsWrapper.firstChild;
             const newLyrics = lyrics.cloneNode(true);
@@ -132,14 +131,6 @@ async function replaceLyricAsync(translatedLine, index) {
             newLyrics.classList.add("newLyrics");
         
     }
-
-    let focusedLyrics = document.querySelector(".EhKgYshvOwpSrTv399Mw");
-    focusedLyrics.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center"
-    });
-    console.log(focusedLyrics)
 
 }
 
@@ -175,7 +166,7 @@ async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage)
         await Promise.all(promises);
 
         // Focus active lyrics
-        let focusedLyrics = document.querySelector(".EhKgYshvOwpSrTv399Mw");
+        let focusedLyrics = document.querySelector("._gZrl2ExJwyxPy1pEUG2");
         focusedLyrics.scrollIntoView({
             behavior: "smooth",
             block: "center",
@@ -206,7 +197,7 @@ async function translate() {
         restoreLyrics();
         
         // Focus active lyrics
-        let focusedLyrics = document.querySelector(".EhKgYshvOwpSrTv399Mw");
+        let focusedLyrics = document.querySelector("._gZrl2ExJwyxPy1pEUG2");
         focusedLyrics.scrollIntoView({
             behavior: "smooth",
             block: "center",
