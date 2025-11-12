@@ -26,7 +26,6 @@
     margin-bottom: 10px;
     opacity: var(--newLyricsOpacity) !important;
     line-height: var(--newLyricsLineHeight) !important;
-    animation: 0.25s ease-in-out slideIn;
 }
 
 .newLyrics:hover {
@@ -40,7 +39,7 @@
 .originalLyrics {
     font-size: var(--lyricsSize) !important;
     display: var(--lyricsDisplay) !important;
-    line-height: 1.5em ;
+    line-height: 1.5em;
 }
 
 .translateButton {
