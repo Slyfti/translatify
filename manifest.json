@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "__MSG_extName__",
     "description": "__MSG_extDesc__",
-    "version": "0.0.0.10",
+    "version": "0.0.0.11",
     "default_locale": "en",
     "action": {
       "default_popup": "popup/popup.html",
