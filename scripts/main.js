@@ -1,3 +1,10 @@
+//   ______                      __      __  _ ____     
+//  /_  __/________ _____  _____/ /___ _/ /_(_) __/_  __
+//   / / / ___/ __ `/ __ \/ ___/ / __ `/ __/ / /_/ / / /
+//  / / / /  / /_/ / / / (__  ) / /_/ / /_/ / __/ /_/ / 
+// /_/ /_/   \__,_/_/ /_/____/_/\__,_/\__/_/_/  \__, /  
+//                                             /____/   
+
 eraseButton();
 loadChecker();
 console.log("Translatify: Lyrics Translator is running..");
@@ -17,7 +24,8 @@ chrome.storage.local.get(['language'], (result) => {
     if (result.language == null) {
         chrome.storage.local.set({language: defaultLanguage}, () => {
             console.log("Translatify: Language is set to default");
-            refreshTranslation();
+            restoreLyrics();
+            translate();
         });
     }
 }
@@ -61,7 +69,8 @@ chrome.storage.local.get(['newLyricsSize'], (result) => {
 chrome.runtime.onMessage.addListener(msgObj => {
     if (msgObj.updateLanguage) {
         console.log("Translatify: Language updated!");
-        refreshTranslation();
+        restoreLyrics();
+        translate();
     }
 
     if (msgObj.toggleTranslation !== undefined) {
