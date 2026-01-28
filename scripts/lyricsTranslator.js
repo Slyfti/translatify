@@ -7,8 +7,52 @@ const mutationObservers = new Map();
 // Flag to prevent observer infinite loops
 let isTranslating = false;
 
+// To modify if spotify decides to change variable names
+const lyricLine = "div[data-testid='lyrics-line']";
+
 function getMainView() {
     return document.querySelector("#main-view") || document.querySelector('#main') || document.body;
+}
+
+function getLyricsTextList() {
+    const lyricsWrapperList = document.querySelectorAll(lyricLine);
+    const lyricsList = [];
+    if (lyricsWrapperList) {
+        lyricsWrapperList.forEach((lyricsWrapper) => {
+            const lyrics = lyricsWrapper.firstChild.textContent;
+            lyricsList.push(lyrics);
+        });
+    }
+    return lyricsList;
+}
+
+// Hopefully a reliable way to get the current focused lyrics w/out relying on class names (that changes w/ spotify UI updates).
+function getFocusedLyric() {
+    const lines = document.querySelectorAll(lyricLine);
+
+    // Group classes by frequency
+    const classCounts = {};
+    lines.forEach(line => {
+        line.classList.forEach(cls => {
+            classCounts[cls] = (classCounts[cls] || 0) + 1;
+        });
+    });
+
+    // The focused line will have a class that appears only once.
+    return Array.from(lines).find(line =>
+        Array.from(line.classList).some(cls => classCounts[cls] === 1)
+    );
+}
+// Focuses active lyric to make up for the layout shift due to new subtitles being added.
+function focusActiveLyric() {
+    let focusedLyrics = getFocusedLyric()
+    if (focusedLyrics) {
+        focusedLyrics.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center"
+        });
+    }
 }
 
 async function translateText(text,sourceLanguage,destinationLanguage) {
@@ -16,7 +60,7 @@ async function translateText(text,sourceLanguage,destinationLanguage) {
     // Check cache first
     const cacheKey = `${text}|${sourceLanguage}|${destinationLanguage}`;
     if (translationCache.has(cacheKey)) {
-        console.log('Using cached translation for:', text.substring(0, 30));
+        console.log('Translatify: using cached translation for:', text.substring(0, 30));
         return translationCache.get(cacheKey);
     }
 
@@ -53,7 +97,7 @@ function restoreLyrics() {
     // Disconnect all observers first
     disconnectAllObservers();
 
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
+    const lyricsWrapperList = document.querySelectorAll(lyricLine);
     if (lyricsWrapperList) {
         lyricsWrapperList.forEach((lyricsWrapper, index) => {
             lyricsWrapper.classList.remove("modifedLyricsWrapper");
@@ -73,17 +117,6 @@ function restoreLyrics() {
 
 }
 
-function getLyrics() {
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
-    const lyricsList = [];
-    if (lyricsWrapperList) {
-        lyricsWrapperList.forEach((lyricsWrapper) => {
-            const lyrics = lyricsWrapper.firstChild.textContent;
-            lyricsList.push(lyrics);
-        });
-    }
-    return lyricsList;
-}
 
 // This mess is due to Spotify's dynamic lyric highlighting behavior
 async function setupMutationObserver() {
@@ -92,7 +125,7 @@ async function setupMutationObserver() {
 
     // Only set up once - don't recreate if already exists
     if (mutationObservers.has(observerKey)) {
-        console.log('Observer already set up for main view');
+        console.log('Translatify: Observer already set up for main view');
         return;
     }
 
@@ -104,14 +137,14 @@ async function setupMutationObserver() {
     const observer = new MutationObserver((mutations) => {
         // Prevent infinite loop - don't re-translate while already translating
         if (isTranslating) {
-            console.log('Translation in progress, skipping observer trigger');
+            console.log('Translatify: Translation in progress, skipping observer trigger');
             return;
         }
         
         // Check if translation is enabled
         const translateButton = document.querySelector("button[data-testid='translate-button']");
         if (!translateButton || translateButton.getAttribute("aria-pressed") !== "true") {
-            console.log('Translation not enabled, skipping');
+            console.log('Translatify: Translation not enabled, skipping');
             return;
         }
         
@@ -122,7 +155,7 @@ async function setupMutationObserver() {
                 for (const node of mutation.addedNodes) {
                     if (node.nodeType === Node.ELEMENT_NODE) {
                         // Check if the node itself is a lyrics-line
-                        if (node.matches && node.matches("div[data-testid='lyrics-line']")) {
+                        if (node.matches && node.matches(lyricLine)) {
                             if (!node.classList.contains("modifedLyricsWrapper")) {
                                 const lyricsText = node.firstChild?.textContent;
                                 if (lyricsText) {
@@ -132,20 +165,14 @@ async function setupMutationObserver() {
                                         // IMMEDIATE modification from cache
                                         const translatedLine = translationCache.get(cacheKey);
                                         replaceLyricSync(translatedLine, node);
-                                        console.log('Applied cached translation immediately:', lyricsText.substring(0, 30));
+                                        console.log('Translatify: Applied cached translation immediately:', lyricsText.substring(0, 30));
                                     } else {
                                         // If not cached, translate async and update later
-                                        console.log('Translation not cached, fetching:', lyricsText.substring(0, 30));
+                                        console.log('Translatify: Translation not cached, fetching:', lyricsText.substring(0, 30));
                                         translateAndUpdateAsync(node, lyricsText, sourceLanguage, destinationLanguage);
                                     }
 
-                                    // Focus active lyrics
-                                    let focusedLyrics = document.querySelector("._gZrl2ExJwyxPy1pEUG2");
-                                    focusedLyrics.scrollIntoView({
-                                        behavior: "smooth",
-                                        block: "center",
-                                        inline: "center"
-                                    });
+                                    focusActiveLyric();
                                 }
                             }
                         }
@@ -221,20 +248,13 @@ async function replaceLyricAsync(translatedLine, lyricsWrapper, sourceLanguage, 
         newLyrics.classList.add("newLyrics");
     }
 
-    let focusedLyrics = document.querySelector("._gZrl2ExJwyxPy1pEUG2");
-    if (focusedLyrics) {
-        focusedLyrics.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "center"
-        });
-    }
+    focusActiveLyric();
 }
 
 // Translate lyrics line by line using GTranslate
 async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage) {
     const translationMap = new Map();
-    const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
+    const lyricsWrapperList = document.querySelectorAll(lyricLine);
 
     if (lyricsWrapperList[0] == null) {
         console.log("Lyrics not found: waiting..");
@@ -246,23 +266,17 @@ async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage)
     translationMap.set(' ', ' ');
     translationMap.set('', '');
 
-    const lyricsList = getLyrics();
+    const lyricsList = getLyricsTextList();
     let translatedLyricsList = new Array();
     if (lyricsList) {
-        const lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
+        const lyricsWrapperList = document.querySelectorAll(lyricLine);
         const promises = lyricsList.map(async (lyrics, index) => {
             let translatedLine = await translateText(lyrics, sourceLanguage, destinationLanguage);
             await replaceLyricAsync(translatedLine, lyricsWrapperList[index], sourceLanguage, destinationLanguage);
         });
         await Promise.all(promises);
 
-        // Focus active lyrics
-        let focusedLyrics = document.querySelector("._gZrl2ExJwyxPy1pEUG2");
-        focusedLyrics.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "center"
-        });
+        focusActiveLyric();
     }
 
     // Set up observer once after translation is complete
@@ -288,13 +302,7 @@ async function translate() {
     } else if (translateButton.getAttribute("aria-pressed") == "false") {
         restoreLyrics();
         
-        // Focus active lyrics
-        let focusedLyrics = document.querySelector("._gZrl2ExJwyxPy1pEUG2");
-        focusedLyrics.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-            inline: "center"
-        });
+        focusActiveLyric();
     }
     
 }
