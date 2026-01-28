@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "Translatify - Spotify 가사 번역기",
+        "description": "Extension name"
+    },
+    "extDesc": {
+        "message": "Spotify 가사를 실시간으로 사용자의 언어로 번역해 드립니다.",
+        "description": "Extension description"
+    },
+    "targetLanguage": {
+        "message": "대상 언어",
+        "description": "Target language"
+    },
+    "applyLanguage": {
+        "message": "언어 설정 적용",
+        "description": "Apply language selection"
+    },
+    "lyricsMode": {
+        "message": "가사 모드",
+        "description": "Lyrics mode"
+    },
+    "along": {
+        "message": "원본과 번역 가사 함께 보기",
+        "description": "Show translated lyrics along original"
+    },
+    "replace": {
+        "message": "가사를 번역본으로 교체",
+        "description": "Replace lyrics with translation"
+    },
+    "lyricsSize": {
+        "message": "번역 가사 글꼴 크기",
+        "description": "Font size of translated lyrics"
+    },
+    "toggleTip": {
+        "message": "- 🎵 플레이어 컨트롤 바의 번역 버튼으로 설정해 보세요!",
+        "description": "toggle tip"
+    },
+    "githubRepo": {
+        "message": "오픈 소스 GitHub 저장소를 확인해 보세요!",
+        "description": "github repo"
+    },
+    "reviewLink": {
+        "message": "★ 리뷰를 남겨주세요!",
+        "description": "Chrome Web Store review link"
+    },
+    "translateToggle": {
+        "message": "번역 활성화",
+        "description": "Toggle for enabling/disabling translation"
+    },
+    "translationOn": {
+        "message": "켬",
+        "description": "Translation toggle - on state"
+    },
+    "translationOff": {
+        "message": "끔",
+        "description": "Translation toggle - off state"
+    }
+}
