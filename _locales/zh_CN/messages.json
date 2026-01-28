@@ -1,0 +1,58 @@
+{
+    "extName": {
+        "message": "Translatify - Spotify 歌词翻译",
+        "description": "Extension name"
+    },
+    "extDesc": {
+        "message": "实时将 Spotify 歌词翻译成您的母语。",
+        "description": "Extension description"
+    },
+    "targetLanguage": {
+        "message": "目标语言",
+        "description": "Target language"
+    },
+    "applyLanguage": {
+        "message": "应用语言选择",
+        "description": "Apply language selection"
+    },
+    "lyricsMode": {
+        "message": "歌词模式",
+        "description": "Lyrics mode"
+    },
+    "along": {
+        "message": "原文与译文对照显示",
+        "description": "Show translated lyrics along original"
+    },
+    "replace": {
+        "message": "用译文替换原文",
+        "description": "Replace lyrics with translation"
+    },
+    "lyricsSize": {
+        "message": "译文字体大小",
+        "description": "Font size of translated lyrics"
+    },
+    "toggleTip": {
+        "message": "- 🎵 点击播放控制条上的翻译按钮进行切换！",
+        "description": "toggle tip"
+    },
+    "githubRepo": {
+        "message": "查看开源 GitHub 仓库！",
+        "description": "github repo"
+    },
+    "reviewLink": {
+        "message": "★ 请留下您的评价！",
+        "description": "Chrome Web Store review link"
+    },
+    "translateToggle": {
+        "message": "启用翻译",
+        "description": "Toggle for enabling/disabling translation"
+    },
+    "translationOn": {
+        "message": "开启",
+        "description": "Translation toggle - on state"
+    },
+    "translationOff": {
+        "message": "关闭",
+        "description": "Translation toggle - off state"
+    }
+}
