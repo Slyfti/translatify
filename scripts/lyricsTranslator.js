@@ -55,34 +55,27 @@ function focusActiveLyric() {
     }
 }
 
-async function translateText(text,sourceLanguage,destinationLanguage) {
-
-    // Check cache first
+async function translateText(text, sourceLanguage, destinationLanguage) {
     const cacheKey = `${text}|${sourceLanguage}|${destinationLanguage}`;
     if (translationCache.has(cacheKey)) {
         console.log('Translatify: using cached translation for:', text.substring(0, 30));
         return translationCache.get(cacheKey);
     }
 
-    const params = `&sl=${sourceLanguage}&tl=${destinationLanguage}&q=${text}`;
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t${params}`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const translatedArrays = data[0];
-        let translatedLyrics = "";
-        translatedArrays.forEach((translatedArray) => {
-            translatedLyrics += translatedArray[0];
-        });
+    const response = await chrome.runtime.sendMessage({
+        type: 'TRANSLATE',
+        text,
+        sourceLanguage,
+        destinationLanguage
+    });
 
-        // Store in cache
-        translationCache.set(cacheKey, translatedLyrics);
-
-        return translatedLyrics;
-    } catch (error) {
-        console.error('Error:', error);
+    if (response.error) {
+        console.error('Error:', response.error);
         return null;
     }
+
+    translationCache.set(cacheKey, response.result);
+    return response.result;
 }
 
 function disconnectAllObservers() {
