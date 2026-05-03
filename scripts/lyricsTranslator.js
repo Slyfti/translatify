@@ -1,29 +1,24 @@
+// True while the extension's runtime bridge is still attached to this content script.
+// Becomes false after the extension is reloaded/updated, leaving this script orphaned.
+function isExtensionAlive() {
+    try {
+        return Boolean(chrome.runtime && chrome.runtime.id);
+    } catch {
+        return false;
+    }
+}
+
 // Translation cache
 const translationCache = new Map();
 
 // Active mutation observers
 const mutationObservers = new Map();
 
-// Flag to prevent observer infinite loops
-let isTranslating = false;
-
 // To modify if spotify decides to change variable names
 const lyricLine = "div[data-testid='lyrics-line']";
 
 function getMainView() {
     return document.querySelector("#main-view") || document.querySelector('#main') || document.body;
-}
-
-function getLyricsTextList() {
-    const lyricsWrapperList = document.querySelectorAll(lyricLine);
-    const lyricsList = [];
-    if (lyricsWrapperList) {
-        lyricsWrapperList.forEach((lyricsWrapper) => {
-            const lyrics = lyricsWrapper.firstChild.textContent;
-            lyricsList.push(lyrics);
-        });
-    }
-    return lyricsList;
 }
 
 // Hopefully a reliable way to get the current focused lyrics w/out relying on class names (that changes w/ spotify UI updates).
@@ -55,22 +50,35 @@ function focusActiveLyric() {
     }
 }
 
+// Lines that are pure punctuation / musical symbols don't need translation.
+function isUntranslatable(text) {
+    return !text || !/\p{L}|\p{N}/u.test(text);
+}
+
 async function translateText(text, sourceLanguage, destinationLanguage) {
+    if (isUntranslatable(text)) return text;
+
     const cacheKey = `${text}|${sourceLanguage}|${destinationLanguage}`;
     if (translationCache.has(cacheKey)) {
-        console.log('Translatify: using cached translation for:', text.substring(0, 30));
         return translationCache.get(cacheKey);
     }
 
-    const response = await chrome.runtime.sendMessage({
-        type: 'TRANSLATE',
-        text,
-        sourceLanguage,
-        destinationLanguage
-    });
+    if (!isExtensionAlive()) return null;
 
-    if (response.error) {
-        console.error('Error:', response.error);
+    let response;
+    try {
+        response = await chrome.runtime.sendMessage({
+            type: 'TRANSLATE',
+            text,
+            sourceLanguage,
+            destinationLanguage
+        });
+    } catch {
+        return null;
+    }
+
+    if (!response || response.error) {
+        if (response?.error) console.error('Error:', response.error);
         return null;
     }
 
@@ -124,54 +132,34 @@ async function setupMutationObserver() {
 
     // Get language settings once when setting up observer
     const sourceLanguage = "auto";
-    let destinationLanguage = await chrome.storage.local.get(["language"]);
-    destinationLanguage = destinationLanguage.language || "en";
+    let destinationLanguage = "en";
+    if (isExtensionAlive()) {
+        try {
+            const stored = await chrome.storage.local.get(["language"]);
+            destinationLanguage = stored.language || "en";
+        } catch {}
+    }
 
     const observer = new MutationObserver((mutations) => {
-        // Prevent infinite loop - don't re-translate while already translating
-        if (isTranslating) {
-            console.log('Translatify: Translation in progress, skipping observer trigger');
-            return;
-        }
-        
-        // Check if translation is enabled
         const translateButton = document.querySelector("button[data-testid='translate-button']");
-        if (!translateButton || translateButton.getAttribute("aria-pressed") !== "true") {
-            console.log('Translatify: Translation not enabled, skipping');
-            return;
-        }
-        
-        // Process each mutation SYNCHRONOUSLY
-        for (const mutation of mutations) {
-            // Check added nodes
-            if (mutation.addedNodes.length > 0) {
-                for (const node of mutation.addedNodes) {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        // Check if the node itself is a lyrics-line
-                        if (node.matches && node.matches(lyricLine)) {
-                            if (!node.classList.contains("modifedLyricsWrapper")) {
-                                const lyricsText = node.firstChild?.textContent;
-                                if (lyricsText) {
-                                    // Try to get from cache SYNCHRONOUSLY
-                                    const cacheKey = `${lyricsText}|${sourceLanguage}|${destinationLanguage}`;
-                                    if (translationCache.has(cacheKey)) {
-                                        // IMMEDIATE modification from cache
-                                        const translatedLine = translationCache.get(cacheKey);
-                                        replaceLyricSync(translatedLine, node);
-                                        console.log('Translatify: Applied cached translation immediately:', lyricsText.substring(0, 30));
-                                    } else {
-                                        // If not cached, translate async and update later
-                                        console.log('Translatify: Translation not cached, fetching:', lyricsText.substring(0, 30));
-                                        translateAndUpdateAsync(node, lyricsText, sourceLanguage, destinationLanguage);
-                                    }
+        if (!translateButton || translateButton.getAttribute("aria-pressed") !== "true") return;
 
-                                    focusActiveLyric();
-                                }
-                            }
-                        }
-                        
-                    }
+        for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+                if (node.nodeType !== Node.ELEMENT_NODE) continue;
+                if (!node.matches?.(lyricLine)) continue;
+                if (node.classList.contains("modifedLyricsWrapper")) continue;
+
+                const lyricsText = node.firstChild?.textContent;
+                if (!lyricsText) continue;
+
+                const cacheKey = `${lyricsText}|${sourceLanguage}|${destinationLanguage}`;
+                if (translationCache.has(cacheKey)) {
+                    replaceLyric(translationCache.get(cacheKey), node);
+                } else {
+                    translateAndUpdateAsync(node, lyricsText, sourceLanguage, destinationLanguage);
                 }
+                focusActiveLyric();
             }
         }
     });
@@ -191,106 +179,77 @@ async function setupMutationObserver() {
     }
 }
 
-// Synchronous version for immediate modification from cache
-function replaceLyricSync(translatedLine, lyricsWrapper) {
-    if (lyricsWrapper != null && translatedLine != null && lyricsWrapper.classList.contains("modifedLyricsWrapper") == false) {
-        lyricsWrapper.classList.add("modifedLyricsWrapper");
-        const lyrics = lyricsWrapper.firstChild;
-        const originalText = lyrics.innerText;
-        const newLyrics = lyrics.cloneNode(true);
+// Replace a lyric line in-place with its translation, preserving the original
+// element so we can restore it later.
+function replaceLyric(translatedLine, lyricsWrapper) {
+    if (!lyricsWrapper || translatedLine == null) return;
+    if (lyricsWrapper.classList.contains("modifedLyricsWrapper")) return;
 
-        lyrics.setAttribute("original", originalText);
-        lyrics.classList.add("originalLyrics");
+    lyricsWrapper.classList.add("modifedLyricsWrapper");
+    const lyrics = lyricsWrapper.firstChild;
+    const originalText = lyrics.innerText;
+    const newLyrics = lyrics.cloneNode(true);
 
-        newLyrics.innerText = translatedLine;
-        lyricsWrapper.appendChild(newLyrics);
-        newLyrics.classList.add("newLyrics");
-    }
+    lyrics.setAttribute("original", originalText);
+    lyrics.classList.add("originalLyrics");
+
+    newLyrics.innerText = translatedLine;
+    lyricsWrapper.appendChild(newLyrics);
+    newLyrics.classList.add("newLyrics");
 }
 
-// Async version for fallback when translation not cached
 async function translateAndUpdateAsync(lyricsWrapper, lyricsText, sourceLanguage, destinationLanguage) {
-    isTranslating = true;
     try {
         const translatedLine = await translateText(lyricsText, sourceLanguage, destinationLanguage);
-        if (translatedLine && !lyricsWrapper.classList.contains("modifedLyricsWrapper")) {
-            replaceLyricSync(translatedLine, lyricsWrapper);
+        if (translatedLine != null) {
+            replaceLyric(translatedLine, lyricsWrapper);
         }
     } catch (error) {
         console.error('Error translating line:', error);
-    } finally {
-        isTranslating = false;
     }
 }
 
-// Lyric replacement function
-async function replaceLyricAsync(translatedLine, lyricsWrapper, sourceLanguage, destinationLanguage) {
-    if (lyricsWrapper != null && translatedLine != null && lyricsWrapper.classList.contains("modifedLyricsWrapper") == false) {
-        
-
-        lyricsWrapper.classList.add("modifedLyricsWrapper");
-        const lyrics = lyricsWrapper.firstChild;
-        const originalText = lyrics.innerText;
-        const newLyrics = lyrics.cloneNode(true);
-
-        lyrics.setAttribute("original", originalText);
-        lyrics.classList.add("originalLyrics");
-
-        newLyrics.innerText = translatedLine;
-        lyricsWrapper.appendChild(newLyrics);
-        newLyrics.classList.add("newLyrics");
-    }
-
-    focusActiveLyric();
-}
-
-// Translate lyrics line by line using GTranslate
-async function translateLineByLineWithGoogle(sourceLanguage,destinationLanguage) {
-    const translationMap = new Map();
+// Translate every visible lyric line, then attach the mutation observer to
+// translate any new lines Spotify renders later.
+async function translateLineByLineWithGoogle(sourceLanguage, destinationLanguage) {
     const lyricsWrapperList = document.querySelectorAll(lyricLine);
 
-    if (lyricsWrapperList[0] == null) {
-        console.log("Lyrics not found: waiting..");
+    if (lyricsWrapperList.length === 0) {
+        console.log("Translatify: lyrics not found, retrying..");
         return setTimeout(translate, 100);
     }
 
-    // No need to translate these characters
-    translationMap.set('♪', '♪');
-    translationMap.set(' ', ' ');
-    translationMap.set('', '');
+    const promises = Array.from(lyricsWrapperList).map(async (wrapper) => {
+        const lyrics = wrapper.firstChild?.textContent;
+        if (!lyrics) return;
+        const translatedLine = await translateText(lyrics, sourceLanguage, destinationLanguage);
+        if (translatedLine != null) replaceLyric(translatedLine, wrapper);
+    });
+    await Promise.all(promises);
 
-    const lyricsList = getLyricsTextList();
-    let translatedLyricsList = new Array();
-    if (lyricsList) {
-        const lyricsWrapperList = document.querySelectorAll(lyricLine);
-        const promises = lyricsList.map(async (lyrics, index) => {
-            let translatedLine = await translateText(lyrics, sourceLanguage, destinationLanguage);
-            await replaceLyricAsync(translatedLine, lyricsWrapperList[index], sourceLanguage, destinationLanguage);
-        });
-        await Promise.all(promises);
-
-        focusActiveLyric();
-    }
-
-    // Set up observer once after translation is complete
+    focusActiveLyric();
     setupMutationObserver();
 }
 
 // MAIN TRANSLATION FUNCTION
 async function translate() {
-    
+    if (!isExtensionAlive()) return;
+
     const sourceLanguage = "auto";
     let destinationLanguage = "en";
-
-    destinationLanguage = await chrome.storage.local.get(["language"]);
-    destinationLanguage = destinationLanguage.language;
-
+    try {
+        const stored = await chrome.storage.local.get(["language"]);
+        destinationLanguage = stored.language || "en";
+    } catch {
+        return;
+    }
 
     const translateButton = document.querySelector("button[data-testid='translate-button']");
     const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
+    if (!translateButton || !lyricsButton) return;
 
 
-    if (translateButton.getAttribute("aria-pressed") == "true" && lyricsButton.getAttribute("aria-pressed") == "true") {
+    if (translateButton.getAttribute("aria-pressed") == "true" && lyricsButton.getAttribute("data-active") == "true") {
         await translateLineByLineWithGoogle(sourceLanguage,destinationLanguage);
     } else if (translateButton.getAttribute("aria-pressed") == "false") {
         restoreLyrics();
@@ -300,8 +259,3 @@ async function translate() {
     
 }
 
-// Clear translation cache
-function clearTranslationCache() {
-    translationCache.clear();
-    console.log('Translation cache cleared');
-}

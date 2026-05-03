@@ -56,36 +56,25 @@ chrome.storage.local.get(['translateButton'], (result) => {
     }
 });
 
+function sendToSpotifyTabs(message) {
+    chrome.tabs.query({ url: "https://open.spotify.com/*" }, tabs => {
+        tabs.forEach(tab => {
+            chrome.tabs.sendMessage(tab.id, message).catch(() => {});
+        });
+    });
+}
+
 // Handle translate toggle changes
 translateToggle.addEventListener('change', async () => {
     const isEnabled = translateToggle.checked;
-    chrome.storage.local.set({translateButton: isEnabled}).then(() => {
-        console.log("Translatify: Translation toggle updated");
-    });
-    
-    // Update all open tabs
-    chrome.tabs.query({}, tabs => {
-        tabs.forEach(tab => {
-            chrome.tabs.sendMessage(tab.id, { toggleTranslation: isEnabled });
-        });
-    });
+    await chrome.storage.local.set({translateButton: isEnabled});
+    sendToSpotifyTabs({ toggleTranslation: isEnabled });
 });
 
 applyLanguageButton.addEventListener('click', async () => {
     const language = languageSelector.value;
-    chrome.storage.local.set({language: language}).then(() => {
-        console.log("Translatify: Language is set");
-    });
-    
-
-    chrome.tabs.query({}, tabs => {
-        tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id, { updateLanguage: language });
-      });
-    });
-
-
-    
+    await chrome.storage.local.set({language: language});
+    sendToSpotifyTabs({ updateLanguage: language });
 });
 
 
@@ -102,36 +91,19 @@ newLyricsSize.addEventListener('input', () => {
 newLyricsSize.addEventListener('change', async () => {
     const size = newLyricsSize.value;
     updateLyricsSizeDisplay(size);
-    chrome.storage.local.set({newLyricsSize: size}).then(() => {
-        console.log("Translatify: Change lyric size");
-    });
-    
-
-    chrome.tabs.query({}, tabs => {
-        tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id, { newLyricsSize: size });
-      });
-    });
-
-
-    
+    await chrome.storage.local.set({newLyricsSize: size});
+    sendToSpotifyTabs({ newLyricsSize: size });
 });
 
 lyricsMode.addEventListener('change', async () => {
     const mode = lyricsMode.value;
-    chrome.storage.local.set({lyricsMode: mode}).then(() => {
-        console.log("Translatify: Change lyric mode");
-        newLyricsSize.value = chrome.storage.local.get(['newLyricsSize']);
-
-    });
-    
-
-    chrome.tabs.query({}, tabs => {
-        tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id, { lyricsMode: mode });
-      });
-    });
-
+    await chrome.storage.local.set({lyricsMode: mode});
+    const stored = await chrome.storage.local.get(['newLyricsSize']);
+    if (stored.newLyricsSize) {
+        newLyricsSize.value = stored.newLyricsSize;
+        updateLyricsSizeDisplay(stored.newLyricsSize);
+    }
+    sendToSpotifyTabs({ lyricsMode: mode });
 });
 
 

@@ -68,8 +68,9 @@ function setupListening() {
 
 // Translates the lyrics
 function toggleTranslateButton() {
+    if (!isExtensionAlive()) return;
     const translateButton = document.querySelector("button[data-testid='translate-button']");
-    
+    if (!translateButton) return;
 
     if (translateButton.getAttribute("aria-pressed") == "false") {
         translateButton.setAttribute("aria-pressed", "true");
@@ -78,14 +79,14 @@ function toggleTranslateButton() {
         translateButton.classList.add("RK45o6dbvO1mb0wQtSwq");
         translateButton.classList.add("fZjbVIqD8Xc3auRZOxu5");
 
-        chrome.storage.local.set({translateButton:true});
+        try { chrome.storage.local.set({translateButton:true}).catch(() => {}); } catch {}
     } else {
         translateButton.setAttribute("aria-pressed", "false");
         translateButton.classList.remove("hKhTmo");
-        translateButton.classList.remove("RK45o6dbvO1mb0wQtSwq"); 
+        translateButton.classList.remove("RK45o6dbvO1mb0wQtSwq");
         translateButton.classList.remove("fZjbVIqD8Xc3auRZOxu5");
-        
-        chrome.storage.local.set({translateButton:false});
+
+        try { chrome.storage.local.set({translateButton:false}).catch(() => {}); } catch {}
     }
 
     translate();
@@ -95,12 +96,9 @@ function toggleTranslateButton() {
 function enableTranslateButton() {
     const translateButton = document.querySelector("button[data-testid='translate-button']");
     const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
+    if (!translateButton || !lyricsButton) return;
 
-    if (lyricsButton.getAttribute("data-active") == "true") {
-        translateButton.disabled = false;
-    } else if (lyricsButton.getAttribute("data-active") == "false") {
-        translateButton.disabled = true;
-    }
+    translateButton.disabled = lyricsButton.getAttribute("data-active") !== "true";
 }
 
 
