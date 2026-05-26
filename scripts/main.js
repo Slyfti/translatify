@@ -22,7 +22,7 @@ function run() {
     }
     );
     chrome.storage.local.get(['language'], (result) => {
-        let defaultLanguage = navigator.language.split('-')[0];
+        let defaultLanguage = navigator.language;
         if (result.language == null) {
             chrome.storage.local.set({ language: defaultLanguage }, () => {
                 console.log("Translatify: Language is set to default");
