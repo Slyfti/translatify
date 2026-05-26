@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "__MSG_extName__",
     "description": "__MSG_extDesc__",
-    "version": "0.0.0.16",
+    "version": "0.0.0.17",
     "default_locale": "en",
     "action": {
       "default_popup": "popup/popup.html",
@@ -27,7 +27,10 @@
     ],
 
     "background": {
-      "service_worker": "scripts/background.js"
+      "service_worker": "scripts/background.js",
+      "scripts": [
+        "scripts/background.js"
+      ]
     },
 
     "permissions": [
