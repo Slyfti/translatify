@@ -1,53 +1,50 @@
 {
-    "manifest_version": 3,
-    "name": "__MSG_extName__",
-    "description": "__MSG_extDesc__",
-    "version": "0.0.0.17",
-    "default_locale": "en",
-    "action": {
-      "default_popup": "popup/popup.html",
-      "default_icon": "images/icon-128.png"
-    },
-
-    "icons": {
-          "16": "images/icon-16.png",
-          "32": "images/icon-32.png",
-          "64": "images/icon-64.png",
-          "128": "images/icon-128.png"
-    },
-
-    "content_scripts": [
-          {
-            "css": ["styles/translatify.css"],
-            "js": ["scripts/translateButton.js","scripts/lyricsTranslator.js", "scripts/main.js"],
-            "matches": [
-              "https://open.spotify.com/*"
-            ]
-          }
-    ],
-
-    "background": {
-      "service_worker": "scripts/background.js",
-      "scripts": [
-        "scripts/background.js"
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDesc__",
+  "version": "0.0.0.18",
+  "default_locale": "en",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "images/icon-128.png"
+  },
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "64": "images/icon-64.png",
+    "128": "images/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "css": [
+        "styles/translatify.css"
+      ],
+      "js": [
+        "scripts/translateButton.js",
+        "scripts/lyricsTranslator.js",
+        "scripts/main.js"
+      ],
+      "matches": [
+        "https://open.spotify.com/*"
       ]
-    },
-
-    "permissions": [
-      "storage"
-    ],
-
-    "host_permissions": [
-      "https://translate.googleapis.com/*"
-    ],
-
-    "browser_specific_settings": {
-      "gecko": {
-        "id": "{3857dee9-93b0-4694-9d1a-199e5a5c8b88}",
-        "strict_min_version": "109.0"
-      }
-
     }
-
-      
+  ],
+  "background": {
+    "service_worker": "scripts/background.js",
+    "scripts": [
+      "scripts/background.js"
+    ]
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://translate.googleapis.com/*"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{3857dee9-93b0-4694-9d1a-199e5a5c8b88}",
+      "strict_min_version": "109.0"
+    }
+  }
 }
