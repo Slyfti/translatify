@@ -61,6 +61,14 @@ The extension is now active.
 
 ---
 
+## AI Translation Notice (Experimental)
+
+Configure the AI provider, tap the translation and sit for few seconds.
+AI translation requires full lyrics as context to improve its tranlsation quality, which also is a **time consuming** task.  
+To reduce AI translation time, you can **turn off thinking mode**.
+When the AI translation not finish, it partially use Google Translation instead.
+
+---
 ### Getting Help
 
 If you have any questions or need assistance:
