@@ -102,6 +102,24 @@ function run() {
             console.log("Translatify: Lyrics size updated!");
 
         }
+
+        if (msgObj.updateTranslationProvider) {
+            console.log("Translatify: Translation provider changed to", msgObj.updateTranslationProvider);
+            restoreLyrics();
+            translate();
+        }
+
+        if (msgObj.updateAiSettings) {
+            console.log("Translatify: AI settings updated");
+            restoreLyrics();
+            translate();
+        }
+
+        if (msgObj.updateAiThinkMode !== undefined) {
+            console.log("Translatify: AI think mode updated to", msgObj.updateAiThinkMode);
+            restoreLyrics();
+            translate();
+        }
     });
 }
 

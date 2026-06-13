@@ -4,6 +4,14 @@ const newLyricsSize = document.getElementById('newLyricsSize');
 const lyricsMode = document.getElementById('lyricsMode');
 const translateToggle = document.getElementById('translateToggle');
 const lyricsSizeValue = document.getElementById('lyricsSizeValue');
+const translationProvider = document.getElementById('translationProvider');
+const aiSettings = document.getElementById('aiSettings');
+const aiEndpoint = document.getElementById('aiEndpoint');
+const aiApiKey = document.getElementById('aiApiKey');
+const aiModel = document.getElementById('aiModel');
+const aiTestConnection = document.getElementById('aiTestConnection');
+const aiTestStatus = document.getElementById('aiTestStatus');
+const aiThinkMode = document.getElementById('aiThinkMode');
 
 $(document).ready(function() {
     $('#languageSelector').select2();
@@ -15,16 +23,15 @@ $(document).ready(function() {
 });
 
 $(document).ready(function(){
-    
+
  });
 
 chrome.storage.local.get(['language'], (result) => {
     if (result.language) {
         languageSelector.value = result.language;
-        $("#languageSelector").val(result.language).trigger("change"); // Changes the value of the select2
-        
+        $("#languageSelector").val(result.language).trigger("change");
     } else {
-        $("#languageSelector").val("en").trigger('change'); // Changes the value of the select2
+        $("#languageSelector").val("en").trigger('change');
     }
 }
 );
@@ -46,14 +53,32 @@ chrome.storage.local.get(['lyricsMode'], (result) => {
 }
 );
 
-// Load translate button state
 chrome.storage.local.get(['translateButton'], (result) => {
     if (result.translateButton !== undefined) {
         translateToggle.checked = result.translateButton;
     } else {
-        // Default to enabled if not set
         translateToggle.checked = true;
     }
+});
+
+// Load AI provider settings
+chrome.storage.local.get(['translationProvider', 'aiEndpoint', 'aiApiKey', 'aiModel', 'aiThinkMode'], (result) => {
+    if (result.translationProvider) {
+        translationProvider.value = result.translationProvider;
+    }
+    if (result.aiEndpoint) {
+        aiEndpoint.value = result.aiEndpoint;
+    }
+    if (result.aiApiKey) {
+        aiApiKey.value = result.aiApiKey;
+    }
+    if (result.aiModel) {
+        aiModel.value = result.aiModel;
+    }
+    if (result.aiThinkMode !== undefined) {
+        aiThinkMode.checked = result.aiThinkMode;
+    }
+    aiSettings.style.display = translationProvider.value === 'customAI' ? 'block' : 'none';
 });
 
 function sendToSpotifyTabs(message) {
@@ -64,7 +89,6 @@ function sendToSpotifyTabs(message) {
     });
 }
 
-// Handle translate toggle changes
 translateToggle.addEventListener('change', async () => {
     const isEnabled = translateToggle.checked;
     await chrome.storage.local.set({translateButton: isEnabled});
@@ -77,13 +101,91 @@ applyLanguageButton.addEventListener('click', async () => {
     sendToSpotifyTabs({ updateLanguage: language });
 });
 
+translationProvider.addEventListener('change', async () => {
+    const provider = translationProvider.value;
+    aiSettings.style.display = provider === 'customAI' ? 'block' : 'none';
+    await chrome.storage.local.set({translationProvider: provider});
+    sendToSpotifyTabs({ updateTranslationProvider: provider });
+});
 
-// Function to update the displayed size value
+async function saveAndPropagateAiSettings() {
+    const endpoint = aiEndpoint.value.trim();
+    const apiKey = aiApiKey.value.trim();
+    const model = aiModel.value.trim();
+    await chrome.storage.local.set({aiEndpoint: endpoint, aiApiKey: apiKey, aiModel: model});
+    sendToSpotifyTabs({ updateAiSettings: { endpoint, apiKey, model } });
+}
+
+aiEndpoint.addEventListener('change', saveAndPropagateAiSettings);
+aiApiKey.addEventListener('change', saveAndPropagateAiSettings);
+aiModel.addEventListener('change', saveAndPropagateAiSettings);
+
+aiThinkMode.addEventListener('change', async () => {
+    const thinkMode = aiThinkMode.checked;
+    await chrome.storage.local.set({aiThinkMode: thinkMode});
+    sendToSpotifyTabs({ updateAiThinkMode: thinkMode });
+});
+
+aiTestConnection.addEventListener('click', async () => {
+    const endpoint = aiEndpoint.value.trim();
+    const apiKey = aiApiKey.value.trim();
+    const model = aiModel.value.trim();
+
+    if (!endpoint || !apiKey) {
+        aiTestStatus.textContent = chrome.i18n.getMessage('aiTestFail') || 'Connection failed. Check your settings.';
+        aiTestStatus.className = 'error';
+        return;
+    }
+
+    aiTestStatus.textContent = chrome.i18n.getMessage('aiTestInProgress') || 'Testing...';
+    aiTestStatus.className = 'loading';
+
+    try {
+        const baseUrl = endpoint.replace(/\/+$/, '');
+        const response = await fetch(`${baseUrl}/chat/completions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: model || 'gpt-4o-mini',
+                messages: [
+                    { role: 'user', content: 'Hi' }
+                ],
+                max_tokens: 5
+            })
+        });
+
+        if (response.ok) {
+            try {
+                const data = await response.json();
+                if (data.choices || data.id || data.object) {
+                    aiTestStatus.textContent = chrome.i18n.getMessage('aiTestSuccess') || 'Connection successful!';
+                    aiTestStatus.className = 'success';
+                } else {
+                    aiTestStatus.textContent = (chrome.i18n.getMessage('aiTestFail') || 'Connection failed. Check your settings.') + ' (unexpected response format)';
+                    aiTestStatus.className = 'error';
+                }
+            } catch {
+                aiTestStatus.textContent = (chrome.i18n.getMessage('aiTestFail') || 'Connection failed.') + ' (endpoint returned non-JSON — check the URL includes the full API path, e.g. /v1)';
+                aiTestStatus.className = 'error';
+            }
+        } else {
+            const errorText = await response.text();
+            aiTestStatus.textContent = (chrome.i18n.getMessage('aiTestFail') || 'Connection failed.') + ` (${response.status})`;
+            aiTestStatus.className = 'error';
+        }
+    } catch (e) {
+        aiTestStatus.textContent = (chrome.i18n.getMessage('aiTestFail') || 'Connection failed.') + ` (${e.message})`;
+        aiTestStatus.className = 'error';
+    }
+});
+
 function updateLyricsSizeDisplay(size) {
     lyricsSizeValue.textContent = size + 'em';
 }
 
-// Update display while dragging the slider
 newLyricsSize.addEventListener('input', () => {
     updateLyricsSizeDisplay(newLyricsSize.value);
 });
@@ -105,5 +207,3 @@ lyricsMode.addEventListener('change', async () => {
     }
     sendToSpotifyTabs({ lyricsMode: mode });
 });
-
-

@@ -39,7 +39,8 @@
     "storage"
   ],
   "host_permissions": [
-    "https://translate.googleapis.com/*"
+    "https://translate.googleapis.com/*",
+    "https://*/*"
   ],
   "browser_specific_settings": {
     "gecko": {

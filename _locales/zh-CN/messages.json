@@ -54,5 +54,73 @@
     "translationOff": {
         "message": "关闭",
         "description": "Translation toggle - off state"
+    },
+    "translationProvider": {
+        "message": "翻译提供商",
+        "description": "Label for translation provider selector"
+    },
+    "providerGoogle": {
+        "message": "Google 翻译",
+        "description": "Google Translate provider option"
+    },
+    "providerCustomAI": {
+        "message": "自定义 AI（兼容 OpenAI）",
+        "description": "Custom AI provider option"
+    },
+    "aiEndpoint": {
+        "message": "API 端点地址",
+        "description": "Label for AI API endpoint input"
+    },
+    "aiEndpointPlaceholder": {
+        "message": "https://api.openai.com/v1",
+        "description": "Placeholder for AI endpoint input"
+    },
+    "aiEndpointHint": {
+        "message": "/chat/completions 将自动拼接到此地址末尾",
+        "description": "Hint explaining that /chat/completions is appended to the endpoint URL"
+    },
+    "aiApiKey": {
+        "message": "API 密钥",
+        "description": "Label for AI API key input"
+    },
+    "aiModel": {
+        "message": "模型名称",
+        "description": "Label for AI model name input"
+    },
+    "aiModelPlaceholder": {
+        "message": "gpt-4o-mini",
+        "description": "Placeholder for AI model input"
+    },
+    "aiTestConnection": {
+        "message": "测试连接",
+        "description": "Button to test AI API connection"
+    },
+    "aiTestSuccess": {
+        "message": "连接成功！",
+        "description": "Success message for AI connection test"
+    },
+    "aiTestFail": {
+        "message": "连接失败，请检查设置。",
+        "description": "Failure message for AI connection test"
+    },
+    "aiTestInProgress": {
+        "message": "测试中...",
+        "description": "Progress message for AI connection test"
+    },
+    "aiTranslating": {
+        "message": "AI 翻译中...",
+        "description": "Message shown while AI translation is in progress"
+    },
+    "aiThinkMode": {
+        "message": "思考模式",
+        "description": "Label for AI thinking mode toggle"
+    },
+    "thinkModeOn": {
+        "message": "开启",
+        "description": "Thinking mode toggle - on state"
+    },
+    "thinkModeOff": {
+        "message": "关闭",
+        "description": "Thinking mode toggle - off state"
     }
 }

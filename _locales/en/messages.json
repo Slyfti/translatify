@@ -55,5 +55,73 @@
     "translationOff": {
         "message": "Off",
         "description": "Translation toggle - off state"
+    },
+    "translationProvider": {
+        "message": "Translation Provider",
+        "description": "Label for translation provider selector"
+    },
+    "providerGoogle": {
+        "message": "Google Translate",
+        "description": "Google Translate provider option"
+    },
+    "providerCustomAI": {
+        "message": "Custom AI (OpenAI-compatible)",
+        "description": "Custom AI provider option"
+    },
+    "aiEndpoint": {
+        "message": "API Endpoint URL",
+        "description": "Label for AI API endpoint input"
+    },
+    "aiEndpointPlaceholder": {
+        "message": "https://api.openai.com/v1",
+        "description": "Placeholder for AI endpoint input"
+    },
+    "aiEndpointHint": {
+        "message": "/chat/completions will be appended to this URL",
+        "description": "Hint explaining that /chat/completions is appended to the endpoint URL"
+    },
+    "aiApiKey": {
+        "message": "API Key",
+        "description": "Label for AI API key input"
+    },
+    "aiModel": {
+        "message": "Model Name",
+        "description": "Label for AI model name input"
+    },
+    "aiModelPlaceholder": {
+        "message": "gpt-4o-mini",
+        "description": "Placeholder for AI model input"
+    },
+    "aiTestConnection": {
+        "message": "Test Connection",
+        "description": "Button to test AI API connection"
+    },
+    "aiTestSuccess": {
+        "message": "Connection successful!",
+        "description": "Success message for AI connection test"
+    },
+    "aiTestFail": {
+        "message": "Connection failed. Check your settings.",
+        "description": "Failure message for AI connection test"
+    },
+    "aiTestInProgress": {
+        "message": "Testing...",
+        "description": "Progress message for AI connection test"
+    },
+    "aiTranslating": {
+        "message": "Translating with AI...",
+        "description": "Message shown while AI translation is in progress"
+    },
+    "aiThinkMode": {
+        "message": "Thinking Mode",
+        "description": "Label for AI thinking mode toggle"
+    },
+    "thinkModeOn": {
+        "message": "On",
+        "description": "Thinking mode toggle - on state"
+    },
+    "thinkModeOff": {
+        "message": "Off",
+        "description": "Thinking mode toggle - off state"
     }
 }

@@ -11,11 +11,18 @@ function isExtensionAlive() {
 // Translation cache
 const translationCache = new Map();
 
+// AI batch translation cache
+const aiBatchCache = new Map();
+
 // Active mutation observers
 const mutationObservers = new Map();
 
 // To modify if spotify decides to change variable names
 const lyricLine = "div[data-testid='lyrics-line']";
+
+// True while an AI batch translation is in flight — prevents the MutationObserver
+// from falling back to Google Translate for lines that appear during the wait.
+let aiBatchPending = false;
 
 function getMainView() {
     return document.querySelector("#main-view") || document.querySelector('#main') || document.body;
@@ -86,6 +93,64 @@ async function translateText(text, sourceLanguage, destinationLanguage) {
     return response.result;
 }
 
+function getSongInfo() {
+    const titleEl = document.querySelector('[data-testid="context-item-link"]') ||
+                    document.querySelector('[data-testid="context-item-info-title"]') ||
+                    document.querySelector('a[data-testid="now-playing-track-link"]');
+    const artistEl = document.querySelector('[data-testid="context-item-info-artist"]') ||
+                     document.querySelector('[data-testid="context-item-info-subtitle"]');
+    return {
+        songTitle: titleEl?.textContent?.trim() || '',
+        artistName: artistEl?.textContent?.trim() || ''
+    };
+}
+
+async function translateLineByLine(lines, sourceLanguage, destinationLanguage) {
+    const results = [];
+    for (const text of lines) {
+        const translated = await translateText(text, sourceLanguage, destinationLanguage);
+        results.push(translated != null ? translated : text);
+    }
+    return results;
+}
+
+async function translateBatchWithAI(lines, sourceLanguage, destinationLanguage, aiSettings) {
+    const { songTitle, artistName } = getSongInfo();
+    const cacheKey = `${lines.join('|')}|${destinationLanguage}|${songTitle}`;
+    if (aiBatchCache.has(cacheKey)) {
+        return aiBatchCache.get(cacheKey);
+    }
+
+    if (!isExtensionAlive()) return null;
+
+    let response;
+    try {
+        response = await chrome.runtime.sendMessage({
+            type: 'TRANSLATE_BATCH',
+            lines,
+            songTitle,
+            artistName,
+            sourceLanguage,
+            destinationLanguage,
+            endpoint: aiSettings.aiEndpoint,
+            apiKey: aiSettings.aiApiKey,
+            model: aiSettings.aiModel,
+            thinkMode: aiSettings.aiThinkMode
+        });
+    } catch {
+        return null;
+    }
+
+    if (!response || response.error) {
+        if (response?.error) console.error('AI batch translation error:', response.error);
+        return null;
+    }
+
+    const translations = response.translations || [];
+    aiBatchCache.set(cacheKey, translations);
+    return translations;
+}
+
 function disconnectAllObservers() {
     mutationObservers.forEach((observer, key) => {
         observer.disconnect();
@@ -102,7 +167,7 @@ function restoreLyrics() {
     if (lyricsWrapperList) {
         lyricsWrapperList.forEach((lyricsWrapper, index) => {
             lyricsWrapper.classList.remove("modifedLyricsWrapper");
-            
+
             const lyrics = lyricsWrapper.querySelector(".newLyrics");
 
             if (lyrics) {
@@ -156,7 +221,7 @@ async function setupMutationObserver() {
                 const cacheKey = `${lyricsText}|${sourceLanguage}|${destinationLanguage}`;
                 if (translationCache.has(cacheKey)) {
                     replaceLyric(translationCache.get(cacheKey), node);
-                } else {
+                } else if (!aiBatchPending) {
                     translateAndUpdateAsync(node, lyricsText, sourceLanguage, destinationLanguage);
                 }
                 focusActiveLyric();
@@ -231,9 +296,67 @@ async function translateLineByLineWithGoogle(sourceLanguage, destinationLanguage
     setupMutationObserver();
 }
 
+// Batch translate all lyrics with AI, then render them
+async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage, aiSettings) {
+    const lyricsWrapperList = document.querySelectorAll(lyricLine);
+
+    if (lyricsWrapperList.length === 0) {
+        console.log("Translatify: lyrics not found, retrying..");
+        return setTimeout(translate, 100);
+    }
+
+    const wrappers = Array.from(lyricsWrapperList);
+    const lines = wrappers.map(w => w.firstChild?.textContent || '');
+
+    aiBatchPending = true;
+
+    const translations = await translateBatchWithAI(lines, sourceLanguage, destinationLanguage, aiSettings);
+
+    aiBatchPending = false;
+
+    if (!translations || !Array.isArray(translations)) {
+        console.warn('Translatify: AI batch returned non-array, falling back to Google');
+        await translateLineByLineWithGoogle(sourceLanguage, destinationLanguage);
+        return;
+    }
+
+    // Populate line-level cache from the AI batch so the MutationObserver picks
+    // up AI translations instead of falling back to Google.
+    for (let i = 0; i < lines.length; i++) {
+        if (translations[i] != null && lines[i]) {
+            translationCache.set(`${lines[i]}|${sourceLanguage}|${destinationLanguage}`, translations[i]);
+        }
+    }
+
+    // Render all currently-visible wrappers.  The DOM may have changed during
+    // the AI call (Spotify virtual scrolling), so re-query and match by text.
+    const currentWrappers = Array.from(document.querySelectorAll(lyricLine));
+    currentWrappers.forEach(wrapper => {
+        if (wrapper.classList.contains("modifedLyricsWrapper")) return;
+        const text = wrapper.firstChild?.textContent || '';
+        const cacheKey = `${text}|${sourceLanguage}|${destinationLanguage}`;
+        if (translationCache.has(cacheKey)) {
+            replaceLyric(translationCache.get(cacheKey), wrapper);
+        }
+    });
+
+    focusActiveLyric();
+    setupMutationObserver();
+}
+
 // MAIN TRANSLATION FUNCTION
 async function translate() {
     if (!isExtensionAlive()) return;
+
+    // Skip if all visible lyrics are already translated — prevents
+    // unnecessary re-translation when clicking unrelated UI elements.
+    const visibleWrappers = document.querySelectorAll(lyricLine);
+    if (visibleWrappers.length > 0) {
+        const allTranslated = Array.from(visibleWrappers).every(w =>
+            w.classList.contains("modifedLyricsWrapper")
+        );
+        if (allTranslated) return;
+    }
 
     const sourceLanguage = "auto";
     let destinationLanguage = "en";
@@ -250,12 +373,19 @@ async function translate() {
 
 
     if (translateButton.getAttribute("aria-pressed") == "true" && lyricsButton.getAttribute("data-active") == "true") {
-        await translateLineByLineWithGoogle(sourceLanguage,destinationLanguage);
+        const settings = await chrome.storage.local.get(['translationProvider', 'aiEndpoint', 'aiApiKey', 'aiModel', 'aiThinkMode']);
+        if (settings.translationProvider === 'customAI' && settings.aiEndpoint && settings.aiApiKey) {
+            await translateBatchWithAIAndRender(sourceLanguage, destinationLanguage, {
+                aiEndpoint: settings.aiEndpoint,
+                aiApiKey: settings.aiApiKey,
+                aiModel: settings.aiModel,
+                aiThinkMode: settings.aiThinkMode
+            });
+        } else {
+            await translateLineByLineWithGoogle(sourceLanguage, destinationLanguage);
+        }
     } else if (translateButton.getAttribute("aria-pressed") == "false") {
         restoreLyrics();
-        
         focusActiveLyric();
     }
-    
 }
-

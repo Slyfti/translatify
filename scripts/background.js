@@ -65,4 +65,95 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         })();
         return true;
     }
+
+    if (msg.type === 'TRANSLATE_BATCH') {
+        (async () => {
+            try {
+                const { lines, songTitle, artistName, destinationLanguage, endpoint, apiKey, model, thinkMode } = msg;
+                const baseUrl = endpoint.replace(/\/+$/, '');
+                const langName = new Intl.DisplayNames(['en'], { type: 'language' });
+                const tlName = langName.of(destinationLanguage) || destinationLanguage;
+
+                const systemPrompt = [
+                    'You are a skilled literary and song lyric translator.',
+                    'Translate the following song lyrics into ' + tlName + '.',
+                    songTitle ? 'Song title: "' + songTitle + '"' : '',
+                    artistName ? 'Artist: ' + artistName : '',
+                    '',
+                    'Guidelines:',
+                    '- Preserve the poetic, emotional, and rhythmic qualities of the original lyrics.',
+                    '- Maintain the tone, mood, and style appropriate to the song genre.',
+                    '- Adapt idioms, metaphors, and cultural references naturally into the target language.',
+                    '- Keep line breaks and verse structure — each input line must have exactly one output line.',
+                    '- Do NOT add explanations, notes, or commentary.',
+                    '- Return a JSON object with exactly one field "translations" that is an array of strings.',
+                    '- The array must contain exactly one translated string per input line, in the same order.',
+                    '- Example: {"translations": ["translated line 1", "translated line 2", ...]}',
+                    '',
+                    'Input lyrics (one string per line, translate each independently while maintaining overall coherence):'
+                ].filter(Boolean).join('\n');
+
+                const userMessage = JSON.stringify(lines);
+
+                const body = {
+                    model: model || 'gpt-4o-mini',
+                    messages: [
+                        { role: 'system', content: systemPrompt },
+                        { role: 'user', content: userMessage }
+                    ],
+                    temperature: 0.7,
+                    response_format: { type: 'json_object' }
+                };
+
+                if (thinkMode === 'off') {
+                    body.reasoning_effort = 'none';
+                    body.thinking = { type: 'disabled' };
+                }
+
+                const response = await fetch(`${baseUrl}/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    return sendResponse({ error: `API error ${response.status}: ${errorText}` });
+                }
+
+                const contentType = response.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    const preview = await response.text().catch(() => '');
+                    return sendResponse({ error: `Endpoint returned ${contentType || 'unknown content'} instead of JSON. Check that the endpoint URL includes the full API path (e.g. https://api.openai.com/v1 for OpenAI). Preview: ${preview.slice(0, 200)}` });
+                }
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    return sendResponse({ error: `Failed to parse API response as JSON. Check your endpoint URL — it should include the full path (e.g. https://api.openai.com/v1 for OpenAI). Error: ${e.message}` });
+                }
+                const content = data.choices?.[0]?.message?.content;
+                if (!content) {
+                    return sendResponse({ error: 'Empty response from AI' });
+                }
+
+                const parsed = JSON.parse(content);
+                const translations = Array.isArray(parsed) ? parsed
+                    : parsed.translations || parsed.lines || parsed.results || [];
+
+                if (translations.length !== lines.length) {
+                    console.warn('Translatify: AI returned ' + translations.length + ' translations for ' + lines.length + ' lines');
+                }
+
+                sendResponse({ translations });
+            } catch (e) {
+                sendResponse({ error: e.message });
+            }
+        })();
+        return true;
+    }
 });

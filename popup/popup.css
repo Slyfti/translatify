@@ -241,3 +241,57 @@ h4 svg {
     width: 24px;
     height: 24px;
 }
+
+/* AI Settings styles */
+.aiInput {
+    display: block;
+    text-align: left;
+    background-color: #191414;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: aliceblue;
+    height: 32px;
+    width: 100%;
+    border-radius: 4px;
+    padding: 0 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 0.9em;
+}
+
+.aiInput:focus {
+    outline: none;
+    border-color: #1db954;
+}
+
+#aiTestConnection {
+    margin-top: 5px;
+}
+
+#aiTestStatus {
+    display: block;
+    text-align: center;
+    margin-top: 8px;
+    font-size: 0.85em;
+    min-height: 1.2em;
+}
+
+#aiTestStatus.success {
+    color: #1db954;
+}
+
+#aiTestStatus.error {
+    color: #f44336;
+}
+
+#aiTestStatus.loading {
+    color: #ffa726;
+}
+
+.aiHint {
+    display: block;
+    font-size: 0.75em;
+    color: #888;
+    margin-top: -6px;
+    margin-bottom: 10px;
+}
