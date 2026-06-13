@@ -24,6 +24,10 @@ const lyricLine = "div[data-testid='lyrics-line']";
 // from falling back to Google Translate for lines that appear during the wait.
 let aiBatchPending = false;
 
+// Tracks the last song for which an AI batch completed successfully.
+// Prevents re-triggering AI translation for the same song.
+let lastAiSong = null;
+
 function getMainView() {
     return document.querySelector("#main-view") || document.querySelector('#main') || document.body;
 }
@@ -163,6 +167,9 @@ function restoreLyrics() {
     // Disconnect all observers first
     disconnectAllObservers();
 
+    // Reset AI state so a fresh batch can run for the next song
+    lastAiSong = null;
+
     const lyricsWrapperList = document.querySelectorAll(lyricLine);
     if (lyricsWrapperList) {
         lyricsWrapperList.forEach((lyricsWrapper, index) => {
@@ -221,7 +228,7 @@ async function setupMutationObserver() {
                 const cacheKey = `${lyricsText}|${sourceLanguage}|${destinationLanguage}`;
                 if (translationCache.has(cacheKey)) {
                     replaceLyric(translationCache.get(cacheKey), node);
-                } else if (!aiBatchPending) {
+                } else {
                     translateAndUpdateAsync(node, lyricsText, sourceLanguage, destinationLanguage);
                 }
                 focusActiveLyric();
@@ -305,8 +312,33 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
         return setTimeout(translate, 100);
     }
 
+    const { songTitle, artistName } = getSongInfo();
+    const songId = `${songTitle}|${artistName}|${destinationLanguage}`;
+
+    // If AI already translated this song, just render visible wrappers from
+    // the line-level cache — no API call needed.
+    if (lastAiSong === songId) {
+        const currentWrappers = Array.from(document.querySelectorAll(lyricLine));
+        currentWrappers.forEach(wrapper => {
+            if (wrapper.classList.contains("modifedLyricsWrapper")) return;
+            const text = wrapper.firstChild?.textContent || '';
+            const cacheKey = `${text}|${sourceLanguage}|${destinationLanguage}`;
+            const cached = translationCache.get(cacheKey);
+            if (cached != null) {
+                replaceLyric(cached, wrapper);
+            }
+        });
+        focusActiveLyric();
+        return;
+    }
+
     const wrappers = Array.from(lyricsWrapperList);
     const lines = wrappers.map(w => w.firstChild?.textContent || '');
+
+    // Start the MutationObserver now so that lyrics appearing during the AI
+    // call get Google-translated immediately.  Once the AI batch completes,
+    // all visible translations are replaced with the AI results.
+    setupMutationObserver();
 
     aiBatchPending = true;
 
@@ -320,6 +352,8 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
         return;
     }
 
+    lastAiSong = songId;
+
     // Populate line-level cache from the AI batch so the MutationObserver picks
     // up AI translations instead of falling back to Google.
     for (let i = 0; i < lines.length; i++) {
@@ -330,13 +364,23 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
 
     // Render all currently-visible wrappers.  The DOM may have changed during
     // the AI call (Spotify virtual scrolling), so re-query and match by text.
+    // Wrappers already translated by Google (aiBatchPending was off, so the
+    // MutationObserver ran Google fallback) get their text updated in-place
+    // with the AI result.  Unmodified wrappers get the full replaceLyric treatment.
     const currentWrappers = Array.from(document.querySelectorAll(lyricLine));
     currentWrappers.forEach(wrapper => {
-        if (wrapper.classList.contains("modifedLyricsWrapper")) return;
         const text = wrapper.firstChild?.textContent || '';
         const cacheKey = `${text}|${sourceLanguage}|${destinationLanguage}`;
-        if (translationCache.has(cacheKey)) {
-            replaceLyric(translationCache.get(cacheKey), wrapper);
+        const aiTranslation = translationCache.get(cacheKey);
+        if (aiTranslation == null) return;
+
+        if (wrapper.classList.contains("modifedLyricsWrapper")) {
+            const newLyrics = wrapper.querySelector(".newLyrics");
+            if (newLyrics) {
+                newLyrics.innerText = aiTranslation;
+            }
+        } else {
+            replaceLyric(aiTranslation, wrapper);
         }
     });
 
@@ -347,6 +391,10 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
 // MAIN TRANSLATION FUNCTION
 async function translate() {
     if (!isExtensionAlive()) return;
+
+    // Prevent concurrent translation calls — translateButton.js fires translate()
+    // on every button click, now-playing update, and button-bar DOM change.
+    if (aiBatchPending) return;
 
     // Skip if all visible lyrics are already translated — prevents
     // unnecessary re-translation when clicking unrelated UI elements.
