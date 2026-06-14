@@ -24,6 +24,10 @@ const lyricLine = "div[data-testid='lyrics-line']";
 // from falling back to Google Translate for lines that appear during the wait.
 let aiBatchPending = false;
 
+// Synchronous re-entrancy guard for translate().  Set before any await so that
+// calls overlapping across those awaits can't each reach the (paid) AI endpoint.
+let translateInFlight = false;
+
 // Tracks the last song for which an AI batch completed successfully.
 // Prevents re-triggering AI translation for the same song.
 let lastAiSong = null;
@@ -314,10 +318,14 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
 
     const { songTitle, artistName } = getSongInfo();
     const songId = `${songTitle}|${artistName}|${destinationLanguage}`;
+    // Only trust songId as a stable identity when we actually resolved a title.
+    // Otherwise distinct songs all collapse to "||<lang>" and would wrongly
+    // reuse each other's cached translations / never re-translate.
+    const hasSongId = songTitle !== '';
 
     // If AI already translated this song, just render visible wrappers from
     // the line-level cache — no API call needed.
-    if (lastAiSong === songId) {
+    if (hasSongId && lastAiSong === songId) {
         const currentWrappers = Array.from(document.querySelectorAll(lyricLine));
         currentWrappers.forEach(wrapper => {
             if (wrapper.classList.contains("modifedLyricsWrapper")) return;
@@ -352,7 +360,7 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
         return;
     }
 
-    lastAiSong = songId;
+    if (hasSongId) lastAiSong = songId;
 
     // Populate line-level cache from the AI batch so the MutationObserver picks
     // up AI translations instead of falling back to Google.
@@ -393,9 +401,19 @@ async function translate() {
     if (!isExtensionAlive()) return;
 
     // Prevent concurrent translation calls — translateButton.js fires translate()
-    // on every button click, now-playing update, and button-bar DOM change.
-    if (aiBatchPending) return;
+    // on every button click, now-playing update, and button-bar DOM change.  The
+    // guard must be set synchronously, before runTranslate's awaits, or two calls
+    // could both reach the AI batch endpoint for the same song.
+    if (aiBatchPending || translateInFlight) return;
+    translateInFlight = true;
+    try {
+        await runTranslate();
+    } finally {
+        translateInFlight = false;
+    }
+}
 
+async function runTranslate() {
     // Skip if all visible lyrics are already translated — prevents
     // unnecessary re-translation when clicking unrelated UI elements.
     const visibleWrappers = document.querySelectorAll(lyricLine);

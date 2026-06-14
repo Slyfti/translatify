@@ -105,7 +105,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                     response_format: { type: 'json_object' }
                 };
 
-                if (thinkMode === 'off') {
+                if (thinkMode === false) {
                     body.reasoning_effort = 'none';
                     body.thinking = { type: 'disabled' };
                 }
@@ -146,7 +146,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                     : parsed.translations || parsed.lines || parsed.results || [];
 
                 if (translations.length !== lines.length) {
-                    console.warn('Translatify: AI returned ' + translations.length + ' translations for ' + lines.length + ' lines');
+                    return sendResponse({ error: `AI returned ${translations.length} translations for ${lines.length} lines (line count mismatch)` });
                 }
 
                 sendResponse({ translations });
