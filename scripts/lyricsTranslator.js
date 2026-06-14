@@ -24,8 +24,7 @@ const lyricLine = "div[data-testid='lyrics-line']";
 // from falling back to Google Translate for lines that appear during the wait.
 let aiBatchPending = false;
 
-// Synchronous re-entrancy guard for translate().  Set before any await so that
-// calls overlapping across those awaits can't each reach the (paid) AI endpoint.
+// Re-entrancy guard for translate(), set before any await.
 let translateInFlight = false;
 
 // Tracks the last song for which an AI batch completed successfully.
@@ -122,7 +121,7 @@ async function translateLineByLine(lines, sourceLanguage, destinationLanguage) {
     return results;
 }
 
-async function translateBatchWithAI(lines, sourceLanguage, destinationLanguage, aiSettings) {
+async function translateBatchWithAI(lines, sourceLanguage, destinationLanguage) {
     const { songTitle, artistName } = getSongInfo();
     const cacheKey = `${lines.join('|')}|${destinationLanguage}|${songTitle}`;
     if (aiBatchCache.has(cacheKey)) {
@@ -139,11 +138,7 @@ async function translateBatchWithAI(lines, sourceLanguage, destinationLanguage, 
             songTitle,
             artistName,
             sourceLanguage,
-            destinationLanguage,
-            endpoint: aiSettings.aiEndpoint,
-            apiKey: aiSettings.aiApiKey,
-            model: aiSettings.aiModel,
-            thinkMode: aiSettings.aiThinkMode
+            destinationLanguage
         });
     } catch {
         return null;
@@ -308,7 +303,7 @@ async function translateLineByLineWithGoogle(sourceLanguage, destinationLanguage
 }
 
 // Batch translate all lyrics with AI, then render them
-async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage, aiSettings) {
+async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage) {
     const lyricsWrapperList = document.querySelectorAll(lyricLine);
 
     if (lyricsWrapperList.length === 0) {
@@ -318,9 +313,8 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
 
     const { songTitle, artistName } = getSongInfo();
     const songId = `${songTitle}|${artistName}|${destinationLanguage}`;
-    // Only trust songId as a stable identity when we actually resolved a title.
-    // Otherwise distinct songs all collapse to "||<lang>" and would wrongly
-    // reuse each other's cached translations / never re-translate.
+    // Only trust songId when a title resolved; otherwise different songs
+    // collapse to "||<lang>" and reuse each other's cache.
     const hasSongId = songTitle !== '';
 
     // If AI already translated this song, just render visible wrappers from
@@ -350,7 +344,7 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
 
     aiBatchPending = true;
 
-    const translations = await translateBatchWithAI(lines, sourceLanguage, destinationLanguage, aiSettings);
+    const translations = await translateBatchWithAI(lines, sourceLanguage, destinationLanguage);
 
     aiBatchPending = false;
 
@@ -400,10 +394,8 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
 async function translate() {
     if (!isExtensionAlive()) return;
 
-    // Prevent concurrent translation calls — translateButton.js fires translate()
-    // on every button click, now-playing update, and button-bar DOM change.  The
-    // guard must be set synchronously, before runTranslate's awaits, or two calls
-    // could both reach the AI batch endpoint for the same song.
+    // Prevent overlapping calls — translate() fires on many UI events, and the
+    // guard must be set before runTranslate's awaits to be effective.
     if (aiBatchPending || translateInFlight) return;
     translateInFlight = true;
     try {
@@ -439,14 +431,11 @@ async function runTranslate() {
 
 
     if (translateButton.getAttribute("aria-pressed") == "true" && lyricsButton.getAttribute("data-active") == "true") {
-        const settings = await chrome.storage.local.get(['translationProvider', 'aiEndpoint', 'aiApiKey', 'aiModel', 'aiThinkMode']);
-        if (settings.translationProvider === 'customAI' && settings.aiEndpoint && settings.aiApiKey) {
-            await translateBatchWithAIAndRender(sourceLanguage, destinationLanguage, {
-                aiEndpoint: settings.aiEndpoint,
-                aiApiKey: settings.aiApiKey,
-                aiModel: settings.aiModel,
-                aiThinkMode: settings.aiThinkMode
-            });
+        // Gate on provider + endpoint; the background reads the rest and falls
+        // back to Google if it isn't configured.
+        const settings = await chrome.storage.local.get(['translationProvider', 'aiEndpoint']);
+        if (settings.translationProvider === 'customAI' && settings.aiEndpoint) {
+            await translateBatchWithAIAndRender(sourceLanguage, destinationLanguage);
         } else {
             await translateLineByLineWithGoogle(sourceLanguage, destinationLanguage);
         }

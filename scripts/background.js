@@ -69,7 +69,15 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === 'TRANSLATE_BATCH') {
         (async () => {
             try {
-                const { lines, songTitle, artistName, destinationLanguage, endpoint, apiKey, model, thinkMode } = msg;
+                const { lines, songTitle, artistName, destinationLanguage } = msg;
+
+                // Read settings here instead of passing them from the content script.
+                const { aiEndpoint: endpoint, aiApiKey: apiKey, aiModel: model, aiThinkMode: thinkMode } =
+                    await chrome.storage.local.get(['aiEndpoint', 'aiApiKey', 'aiModel', 'aiThinkMode']);
+                if (!endpoint || !apiKey) {
+                    return sendResponse({ error: 'AI endpoint or API key not configured' });
+                }
+
                 const baseUrl = endpoint.replace(/\/+$/, '');
                 const langName = new Intl.DisplayNames(['en'], { type: 'language' });
                 const tlName = langName.of(destinationLanguage) || destinationLanguage;
