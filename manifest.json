@@ -39,7 +39,9 @@
     "storage"
   ],
   "host_permissions": [
-    "https://translate.googleapis.com/*",
+    "https://translate.googleapis.com/*"
+  ],
+  "optional_host_permissions": [
     "https://*/*"
   ],
   "browser_specific_settings": {

@@ -108,10 +108,33 @@ translationProvider.addEventListener('change', async () => {
     sendToSpotifyTabs({ updateTranslationProvider: provider });
 });
 
+function endpointOrigin(endpoint) {
+    try {
+        return new URL(endpoint).origin + '/*';
+    } catch {
+        return null;
+    }
+}
+
+// Request access to the endpoint's origin. It's declared as an optional
+// permission, so we ask for it at runtime from a user gesture instead of
+// requesting blanket access up front. request() resolves true without a
+// prompt if already granted.
+async function ensureHostPermission(endpoint) {
+    const pattern = endpointOrigin(endpoint);
+    if (!pattern) return false;
+    try {
+        return await chrome.permissions.request({ origins: [pattern] });
+    } catch {
+        return false;
+    }
+}
+
 async function saveAndPropagateAiSettings() {
     const endpoint = aiEndpoint.value.trim();
     const apiKey = aiApiKey.value.trim();
     const model = aiModel.value.trim();
+    if (endpoint) await ensureHostPermission(endpoint);
     await chrome.storage.local.set({aiEndpoint: endpoint, aiApiKey: apiKey, aiModel: model});
     sendToSpotifyTabs({ updateAiSettings: { endpoint, apiKey, model } });
 }
@@ -133,6 +156,13 @@ aiTestConnection.addEventListener('click', async () => {
 
     if (!endpoint || !apiKey) {
         aiTestStatus.textContent = chrome.i18n.getMessage('aiTestFail') || 'Connection failed. Check your settings.';
+        aiTestStatus.className = 'error';
+        return;
+    }
+
+    const granted = await ensureHostPermission(endpoint);
+    if (!granted) {
+        aiTestStatus.textContent = (chrome.i18n.getMessage('aiTestFail') || 'Connection failed.') + ' (access to the endpoint was not granted)';
         aiTestStatus.className = 'error';
         return;
     }
