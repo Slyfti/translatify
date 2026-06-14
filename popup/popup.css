@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -13,11 +14,12 @@ body {
 }
 
 h1 {
-    color: #1db954;
+    color: aliceblue;
 }
 
 h4 {
-    margin-top: 0em;
+    margin-top: 0;
+    margin-bottom: 4px;
 }
 
 .header {
@@ -25,6 +27,14 @@ h4 {
     flex-direction: row;
     align-items: center;
     gap: 10px;
+}
+
+.version-label {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 0.7em;
+    color: #7a5c4f;
 }
 
 /* Add spacing for the links */
@@ -53,6 +63,10 @@ h4 {
     border-radius: 8px;
     padding: 20px 16px 26px 16px;
     border: 1px solid rgba(255, 255, 255, 0.10);
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 
@@ -79,32 +93,89 @@ button:hover, input:hover, .buttonLink:hover {
     align-items: center;
 }
 
-select, #languageSelector, #lyricsMode {
-    border: none;
+select {
     height: 32px;
     width: 100%;
     outline: none;
-
 }
 
 .selectOptions {
     background-color: #191414 !important;
-    color: #1db954 !important;
+    color: aliceblue !important;
     border: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Select2 overrides — match native .selectOptions */
+.select2-container--default .select2-selection--single {
+    background-color: #191414;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    height: 32px;
+    border-radius: 4px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: aliceblue;
+    line-height: 32px;
+    font-size: 1em;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 32px;
+}
+
+.select2-dropdown {
+    background-color: #191414;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.select2-results__option {
+    color: aliceblue;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: #333;
+    color: aliceblue;
+}
+
+.select2-search--dropdown .select2-search__field {
+    background-color: #191414;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: aliceblue;
+    outline: none;
 }
 
 #applyLanguage {
     margin-top: 10px !important;
 }
 
+#applyLanguage:disabled {
+    background-color: white;
+    color: #1db954;
+    cursor: default;
+}
+
 /* Toggle Switch Styles */
-.toggle-container {
+.toggle-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.toggle-row h4 {
     margin: 0;
-    margin-top: 10px;
+}
+
+.switch-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.switch-label {
+    font-size: 0.7em;
+    color: #888;
 }
 
 .switch {
@@ -128,7 +199,7 @@ select, #languageSelector, #lyricsMode {
     right: 0;
     bottom: 0;
     background-color: #333333;
-    transition: .4s;
+    transition: .15s;
 }
 
 .slider:before {
@@ -139,7 +210,7 @@ select, #languageSelector, #lyricsMode {
     left: 4px;
     bottom: 4px;
     background-color: white;
-    transition: .4s;
+    transition: .15s;
 }
 
 input:checked + .slider {
@@ -243,6 +314,11 @@ h4 svg {
 }
 
 /* AI Settings styles */
+#aiSettings {
+    margin-top: 12px;
+}
+
+
 .aiInput {
     display: block;
     text-align: left;
@@ -277,7 +353,7 @@ h4 svg {
 }
 
 #aiTestStatus.success {
-    color: #1db954;
+    color: aliceblue;
 }
 
 #aiTestStatus.error {

@@ -1,3 +1,8 @@
+document.getElementById('appVersion').textContent = 'v' + chrome.runtime.getManifest().version;
+
+const _applyBtn = document.getElementById('applyLanguage');
+_applyBtn.dataset.originalText = _applyBtn.textContent;
+
 const applyLanguageButton = document.getElementById('applyLanguage');
 const languageSelector = document.getElementById('languageSelector');
 const newLyricsSize = document.getElementById('newLyricsSize');
@@ -99,6 +104,13 @@ applyLanguageButton.addEventListener('click', async () => {
     const language = languageSelector.value;
     await chrome.storage.local.set({language: language});
     sendToSpotifyTabs({ updateLanguage: language });
+
+    applyLanguageButton.textContent = '✓';
+    applyLanguageButton.disabled = true;
+    setTimeout(() => {
+        applyLanguageButton.textContent = applyLanguageButton.dataset.originalText;
+        applyLanguageButton.disabled = false;
+    }, 1500);
 });
 
 translationProvider.addEventListener('change', async () => {
