@@ -1,25 +1,79 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* ==========================================================================
+   Design tokens — edit colors/spacing here; everything below references these.
+   ========================================================================== */
+:root {
+    /* Colors */
+    --bg: #191414;
+    /* page + inputs background */
+    --surface: #221b1b;
+    /* option card background */
+    --surface-2: #333333;
+    /* sliders, chips, highlighted rows */
+    --border: rgba(255, 255, 255, 0.10);
+    --text: aliceblue;
+    --text-muted: #888;
+    --icon: #ffffff;
+    --green: #1db954;
+    --green-bright: #1ed760;
+    --error: #f44336;
+    --warning: #ffa726;
+
+    /* Button pill (matches input background) */
+    --button-bg: var(--bg);
+    --button-bg-hover: #3a3a3a;
+
+    /* Layout */
+    --font: 'Noto Sans', sans-serif;
+    --radius: 4px;
+    /* controls */
+    --radius-card: 8px;
+    /* option cards */
+    --radius-pill: 9999px;
+    /* buttons */
+    --control-height: 32px;
+}
+
+/* ==========================================================================
+   Base & layout
+   ========================================================================== */
 body {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #191414;
-    color:aliceblue;
-    font-family: 'Noto Sans', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
     width: 350px;
     font-weight: normal;
 }
 
 h1 {
-    color: aliceblue;
+    color: var(--text);
 }
 
 h4 {
     margin-top: 0;
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+h4 svg {
+    width: 1.25em;
+    height: 1.25em;
+    fill: var(--icon);
+}
+
+/* Secondary title — for sub-fields like "API Endpoint URL" */
+h4.subtitle {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--text-muted);
 }
 
 .header {
@@ -34,17 +88,7 @@ h4 {
     top: 6px;
     left: 8px;
     font-size: 0.7em;
-    color: #7a5c4f;
-}
-
-/* Add spacing for the links */
-.options > a {
-    margin-bottom: 5px;
-    text-decoration: none;
-}
-
-.options > a:hover {
-    text-decoration: underline;
+    color: var(--border);
 }
 
 .options {
@@ -55,319 +99,346 @@ h4 {
     width: 100%;
 }
 
+/* Footer links */
+.options>a {
+    margin-bottom: 5px;
+    text-decoration: none;
+}
+
+.options>a:hover {
+    text-decoration: underline;
+}
+
 .optionDiv {
     font-size: 1em;
     width: 85%;
     gap: 10px;
-    background: #221b1b;
-    border-radius: 8px;
+    background: var(--surface);
+    border-radius: var(--radius-card);
     padding: 20px 16px 26px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    border: 1px solid var(--border);
     min-height: 44px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
 
+    /* ==========================================================================
+   Form controls — buttons, inputs, selects
+   ========================================================================== */
+    /* Inputs keep their base box sizing */
+    input {
+        display: block;
+        text-align: center;
+        background-color: white;
+        border: none;
+        color: black;
+        height: var(--control-height);
+        width: 100%;
+        border-radius: var(--radius);
+    }
 
-button, input, .buttonLink {
-    display: block;
-    text-align: center;
-    background-color: white;
-    border: none;
-    color: black;
-    height: 32px;
-    width: 100%;
-    border-radius: 4px;
-}
+    /* Buttons — elevated grey pill */
+    button,
+    .buttonLink {
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        min-height: 35px;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-pill);
+        background-color: var(--button-bg);
+        color: var(--text);
+        font-weight: bold;
+        text-decoration: none;
+        transition: background-color .2s ease-out;
+        box-sizing: border-box;
+    }
 
-button:hover, input:hover, .buttonLink:hover {
-    background-color: #1ED760;
-    cursor: pointer;
-    transition: all 0.25s;
-}
+    button:not(:disabled):hover,
+    .buttonLink:hover {
+        background-color: var(--button-bg-hover);
+    }
 
-.buttonLink {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    select {
+        height: var(--control-height);
+        width: 100%;
+        outline: none;
+    }
 
-select {
-    height: 32px;
-    width: 100%;
-    outline: none;
-}
+    .selectOptions {
+        background-color: var(--bg) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+    }
 
-.selectOptions {
-    background-color: #191414 !important;
-    color: aliceblue !important;
-    border: 1px solid rgba(255, 255, 255, 0.10) !important;
-}
+    #applyLanguage {
+        margin-top: 10px !important;
+    }
 
-/* Select2 overrides — match native .selectOptions */
-.select2-container--default .select2-selection--single {
-    background-color: #191414;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    height: 32px;
-    border-radius: 4px;
-}
+    #applyLanguage:disabled {
+        background-color: var(--button-bg);
+        color: var(--green);
+        cursor: default;
+    }
 
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: aliceblue;
-    line-height: 32px;
-    font-size: 1em;
-}
+    /* Select2 overrides — match native .selectOptions */
+    .select2-container--default .select2-selection--single {
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+        height: var(--control-height);
+        border-radius: var(--radius);
+    }
 
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 32px;
-}
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: var(--text);
+        line-height: var(--control-height);
+        font-size: 1em;
+    }
 
-.select2-dropdown {
-    background-color: #191414;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-}
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: var(--control-height);
+    }
 
-.select2-results__option {
-    color: aliceblue;
-}
+    .select2-dropdown {
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+    }
 
-.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
-    background-color: #333;
-    color: aliceblue;
-}
+    .select2-results__option {
+        color: var(--text);
+    }
 
-.select2-search--dropdown .select2-search__field {
-    background-color: #191414;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    color: aliceblue;
-    outline: none;
-}
+    .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+        background-color: var(--surface-2);
+        color: var(--text);
+    }
 
-#applyLanguage {
-    margin-top: 10px !important;
-}
+    .select2-search--dropdown .select2-search__field {
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        text-align: left;
+        outline: none;
+    }
 
-#applyLanguage:disabled {
-    background-color: white;
-    color: #1db954;
-    cursor: default;
-}
+    /* ==========================================================================
+   Toggle switch
+   ========================================================================== */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
 
-/* Toggle Switch Styles */
-.toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
+    .toggle-row h4 {
+        margin: 0;
+    }
 
-.toggle-row h4 {
-    margin: 0;
-}
+    .switch-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+    }
 
-.switch-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-}
+    .switch-label {
+        font-size: 0.7em;
+        color: var(--text-muted);
+    }
 
-.switch-label {
-    font-size: 0.7em;
-    color: #888;
-}
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 28px;
+    }
 
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 28px;
-}
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--bg);
+        transition: .15s;
+    }
 
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #333333;
-    transition: .15s;
-}
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .15s;
+    }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .15s;
-}
+    input:checked+.slider {
+        background-color: var(--green);
+    }
 
-input:checked + .slider {
-    background-color: #1db954;
-}
+    input:checked+.slider:before {
+        transform: translateX(32px);
+    }
 
-input:checked + .slider:before {
-    transform: translateX(32px);
-}
+    .slider.round {
+        border-radius: 34px;
+    }
 
-.slider.round {
-    border-radius: 34px;
-}
+    .slider.round:before {
+        border-radius: 50%;
+    }
 
-.slider.round:before {
-    border-radius: 50%;
-}
+    /* Range input (green accent) */
+    input[type='range'] {
+        accent-color: var(--green);
+    }
 
-/** Green slider styles */
-input[type='range'] {
-    accent-color: #1db954;
-}
+    /* ==========================================================================
+   Translate icon
+   ========================================================================== */
+    .translate-icon {
+        position: relative;
+    }
 
+    .translate-icon svg {
+        width: 32px;
+        height: 32px;
+        fill: var(--icon);
+        transition: all 0.25s;
+    }
 
-/* Translation toggle icon styles */
-.translate-icon {
-    position: relative;
-}
+    .translate-icon.disabled svg {
+        fill: var(--text-muted);
+    }
 
-h4 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+    /* Dim the icon when the toggle is off */
+    #translateToggle:not(:checked)~.translate-icon svg {
+        fill: var(--text-muted);
+    }
 
-h4 svg {
-    width: 1.25em;
-    height: 1.25em;
-    fill: #ffffff;
-}
+    /* Title row with inline icon */
+    .title-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1.25em;
+    }
 
-.translate-icon svg {
-    width: 32px;
-    height: 32px;
-    fill: #ffffff;
-    transition: all 0.25s;
-}
+    .title-with-icon h4 {
+        margin: 0;
+    }
 
-.translate-icon.disabled svg {
-    fill: #888;
-}
+    .title-with-icon .translate-icon {
+        margin: 0;
+    }
 
-/* Make the translate icon respond to toggle state */
-#translateToggle:not(:checked) ~ .translate-icon svg {
-    fill: #888;
-}
+    .title-with-icon .translate-icon svg {
+        width: 24px;
+        height: 24px;
+    }
 
-/* Slider container with value display */
-.slider-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-}
+    /* ==========================================================================
+   Size slider
+   ========================================================================== */
+    .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
 
-.size-value {
-    min-width: 50px;
-    text-align: center;
-    background-color: #333333;
-    padding: 6px;
-    border-radius: 4px;
-    font-size: 0.9em;
-}
+    .slider-container input[type="range"] {
+        flex-grow: 1;
+        width: auto;
+    }
 
-/* Make the slider take up available space */
-.slider-container input[type="range"] {
-    flex-grow: 1;
-    width: auto;
-}
+    .size-value {
+        min-width: 50px;
+        text-align: center;
+        background-color: var(--bg);
+        padding: 6px;
+        border-radius: var(--radius);
+        font-size: 0.9em;
+    }
 
-/* Title with icon layout */
-.title-with-icon {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 1.25em;
-}
+    /* ==========================================================================
+   AI settings
+   ========================================================================== */
+    #aiSettings {
+        margin-top: 12px;
+    }
 
-.title-with-icon h4 {
-    margin: 0;
-}
+    .aiInput {
+        display: block;
+        text-align: left;
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--text);
+        height: var(--control-height);
+        width: 100%;
+        border-radius: var(--radius);
+        padding: 0 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        font-family: var(--font);
+        font-size: 0.9em;
+    }
 
-/* Smaller icon for inline display */
-.title-with-icon .translate-icon {
-    margin: 0;
-}
+    .aiInput:focus {
+        outline: none;
+        border-color: var(--green);
+    }
 
-.title-with-icon .translate-icon svg {
-    width: 24px;
-    height: 24px;
-}
+    .aiHint {
+        display: block;
+        font-size: 0.75em;
+        color: var(--text-muted);
+        margin-top: -6px;
+        margin-bottom: 10px;
+    }
 
-/* AI Settings styles */
-#aiSettings {
-    margin-top: 12px;
-}
+    #aiTestConnection {
+        /* #applyLanguage gets 10px flex-gap from .optionDiv + 10px margin = 20px.
+       This button is nested in #aiSettings (no flex gap), so match with 20px. */
+        margin-top: 20px;
+    }
 
+    #aiTestStatus {
+        display: block;
+        text-align: center;
+        margin-top: 8px;
+        font-size: 0.85em;
+        min-height: 1.2em;
+    }
 
-.aiInput {
-    display: block;
-    text-align: left;
-    background-color: #191414;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    color: aliceblue;
-    height: 32px;
-    width: 100%;
-    border-radius: 4px;
-    padding: 0 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 0.9em;
-}
+    /* Collapse the reserved status line until a test message is shown, so there's
+   no extra blank space at the bottom of the AI provider section. */
+    #aiTestStatus:empty {
+        display: none;
+    }
 
-.aiInput:focus {
-    outline: none;
-    border-color: #1db954;
-}
+    #aiTestStatus.success {
+        color: var(--text);
+    }
 
-#aiTestConnection {
-    margin-top: 5px;
-}
+    #aiTestStatus.error {
+        color: var(--error);
+    }
 
-#aiTestStatus {
-    display: block;
-    text-align: center;
-    margin-top: 8px;
-    font-size: 0.85em;
-    min-height: 1.2em;
-}
-
-#aiTestStatus.success {
-    color: aliceblue;
-}
-
-#aiTestStatus.error {
-    color: #f44336;
-}
-
-#aiTestStatus.loading {
-    color: #ffa726;
-}
-
-.aiHint {
-    display: block;
-    font-size: 0.75em;
-    color: #888;
-    margin-top: -6px;
-    margin-bottom: 10px;
-}
+    #aiTestStatus.loading {
+        color: var(--warning);
+    }

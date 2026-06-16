@@ -102,10 +102,10 @@ async function translateText(text, sourceLanguage, destinationLanguage) {
 
 function getSongInfo() {
     const titleEl = document.querySelector('[data-testid="context-item-link"]') ||
-                    document.querySelector('[data-testid="context-item-info-title"]') ||
-                    document.querySelector('a[data-testid="now-playing-track-link"]');
+        document.querySelector('[data-testid="context-item-info-title"]') ||
+        document.querySelector('a[data-testid="now-playing-track-link"]');
     const artistEl = document.querySelector('[data-testid="context-item-info-artist"]') ||
-                     document.querySelector('[data-testid="context-item-info-subtitle"]');
+        document.querySelector('[data-testid="context-item-info-subtitle"]');
     return {
         songTitle: titleEl?.textContent?.trim() || '',
         artistName: artistEl?.textContent?.trim() || ''
@@ -208,7 +208,7 @@ async function setupMutationObserver() {
         try {
             const stored = await chrome.storage.local.get(["language"]);
             destinationLanguage = stored.language || "en";
-        } catch {}
+        } catch { }
     }
 
     const observer = new MutationObserver((mutations) => {
@@ -434,10 +434,16 @@ async function runTranslate() {
         // Gate on provider + endpoint; the background reads the rest and falls
         // back to Google if it isn't configured.
         const settings = await chrome.storage.local.get(['translationProvider', 'aiEndpoint']);
-        if (settings.translationProvider === 'customAI' && settings.aiEndpoint) {
-            await translateBatchWithAIAndRender(sourceLanguage, destinationLanguage);
-        } else {
-            await translateLineByLineWithGoogle(sourceLanguage, destinationLanguage);
+        // Show the loading indicator only while lyrics are actually being fetched/rendered.
+        setTranslatingIndicator(true);
+        try {
+            if (settings.translationProvider === 'customAI' && settings.aiEndpoint) {
+                await translateBatchWithAIAndRender(sourceLanguage, destinationLanguage);
+            } else {
+                await translateLineByLineWithGoogle(sourceLanguage, destinationLanguage);
+            }
+        } finally {
+            setTranslatingIndicator(false);
         }
     } else if (translateButton.getAttribute("aria-pressed") == "false") {
         restoreLyrics();

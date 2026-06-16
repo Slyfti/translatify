@@ -4,6 +4,25 @@ function eraseButton() {
     if (translationButton) {
         translationButton.remove();
     }
+    const loadingIndicator = document.querySelector("span[data-testid='translate-loading']");
+    if (loadingIndicator) {
+        loadingIndicator.remove();
+    }
+}
+
+// Shows/hides the 3-dot loading indicator while lyrics are being translated.
+function setTranslatingIndicator(active) {
+    const loader = document.querySelector("span[data-testid='translate-loading']");
+    if (loader) loader.classList.toggle("is-loading", !!active);
+}
+
+// Toggles the rainbow-hue AI indicator class on the translate button.
+function updateTranslateButtonAIState() {
+    const translateButton = document.querySelector("button[data-testid='translate-button']");
+    if (!translateButton || !isExtensionAlive()) return;
+    chrome.storage.local.get(['translationProvider']).then(result => {
+        translateButton.classList.toggle('translateButton--ai', result.translationProvider === 'customAI');
+    }).catch(() => {});
 }
 
 // Wait for all the buttons to load before adding the translate button
@@ -17,6 +36,7 @@ function loadChecker() {
         addTranslateButton();
         enableTranslateButton();
         setupListening();
+        updateTranslateButtonAIState();
 
         // Check if the translate button was enabled on previous session
         chrome.storage.local.get(["translateButton"]).then((result) => {
@@ -74,17 +94,14 @@ function toggleTranslateButton() {
 
     if (translateButton.getAttribute("aria-pressed") == "false") {
         translateButton.setAttribute("aria-pressed", "true");
-        // Green button
-        translateButton.classList.add("hKhTmo");
-        translateButton.classList.add("RK45o6dbvO1mb0wQtSwq");
-        translateButton.classList.add("fZjbVIqD8Xc3auRZOxu5");
+        translateButton.classList.remove("encore-internal-color-text-subdued");
+        translateButton.classList.add("encore-internal-color-text-brightAccent");
 
         try { chrome.storage.local.set({translateButton:true}).catch(() => {}); } catch {}
     } else {
         translateButton.setAttribute("aria-pressed", "false");
-        translateButton.classList.remove("hKhTmo");
-        translateButton.classList.remove("RK45o6dbvO1mb0wQtSwq");
-        translateButton.classList.remove("fZjbVIqD8Xc3auRZOxu5");
+        translateButton.classList.remove("encore-internal-color-text-brightAccent");
+        translateButton.classList.add("encore-internal-color-text-subdued");
 
         try { chrome.storage.local.set({translateButton:false}).catch(() => {}); } catch {}
     }
@@ -109,12 +126,29 @@ function addTranslateButton() {
 
     translateButton.setAttribute("data-testid", "translate-button");
     translateButton.setAttribute("aria-pressed", "false");
-    translateButton.className="Button-sc-1dqy6lx-0 dmdXQN translateButton";
+    translateButton.removeAttribute("aria-checked");
+    translateButton.setAttribute("role", "button");
+    // Keep all Encore design-system classes from the clone so Spotify's own CSS
+    // handles sizing, padding, and hover states. Only add our marker class and
+    // ensure the button starts in the inactive (subdued) colour state.
+    translateButton.classList.add("translateButton");
+    translateButton.classList.remove("encore-internal-color-text-brightAccent");
+    if (!translateButton.classList.contains("encore-internal-color-text-subdued")) {
+        translateButton.classList.add("encore-internal-color-text-subdued");
+    }
 
-    svgButton = translateButton.querySelector("svg");
-    svgButton.innerHTML = '<path d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />';
+    const svgButton = translateButton.querySelector("svg");
+    svgButton.innerHTML = '<defs><linearGradient id="translatify-ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#16c5d6"/><stop offset="50%" stop-color="#5fd391"/><stop offset="100%" stop-color="#a4d93f"/></linearGradient></defs><path d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />';
     svgButton.setAttribute("viewBox", "0 0 24 24");
     buttonBar.appendChild(translateButton);
+
+    // Loading indicator: absolutely positioned inside the button at the top-right corner.
+    const loader = document.createElement("span");
+    loader.setAttribute("data-testid", "translate-loading");
+    loader.className = "translatifyLoader";
+    loader.setAttribute("aria-hidden", "true");
+    loader.innerHTML = '<span class="translatifyDot"></span>'.repeat(3);
+    translateButton.appendChild(loader);
 
     translateButton.addEventListener('click', toggleTranslateButton);
 }
@@ -126,9 +160,11 @@ chrome.runtime.onMessage.addListener(msgObj => {
         if (translateButton) {
             const currentState = translateButton.getAttribute("aria-pressed") === "true";
             if (currentState !== msgObj.toggleTranslation) {
-                // Toggle only if state is different
                 toggleTranslateButton();
             }
         }
+    }
+    if (msgObj.updateTranslationProvider !== undefined || msgObj.updateAiSettings !== undefined) {
+        updateTranslateButtonAIState();
     }
 });

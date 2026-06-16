@@ -19,7 +19,11 @@ const aiTestStatus = document.getElementById('aiTestStatus');
 const aiThinkMode = document.getElementById('aiThinkMode');
 
 $(document).ready(function() {
-    $('#languageSelector').select2();
+    // Render the dropdown inside the .optionDiv so the (nested) select2 CSS
+    // overrides apply — by default select2 appends it to <body>, out of scope.
+    $('#languageSelector').select2({
+        dropdownParent: $('#languageSelector').parent()
+    });
 
     $('body').on('click', 'a', function(){
         chrome.tabs.create({url: $(this).attr('href')});

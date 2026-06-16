@@ -5,7 +5,7 @@
 
     --lyricsSize: 1em;
     --lyricsColor: #fff;
-    --lyricsDisplay : var(--lyricsDisplay);
+    --lyricsDisplay: var(--lyricsDisplay);
 }
 
 @keyframes slideIn {
@@ -14,6 +14,7 @@
         opacity: 0;
         max-height: 0px;
     }
+
     100% {
         opacity: var(--newLyricsOpacity) !important;
         transform: scale(1);
@@ -22,7 +23,7 @@
 }
 
 .newLyrics {
-    font-size: var(--newLyricsSize )!important;
+    font-size: var(--newLyricsSize) !important;
     margin-bottom: 10px;
     opacity: var(--newLyricsOpacity) !important;
     line-height: var(--newLyricsLineHeight) !important;
@@ -32,7 +33,7 @@
     opacity: 0.5;
 }
 
-.EhKgYshvOwpSrTv399Mw > .newLyrics {
+.EhKgYshvOwpSrTv399Mw>.newLyrics {
     opacity: calc(var(--newLyricsOpacity) + 0.30) !important;
 }
 
@@ -41,44 +42,27 @@
     display: var(--lyricsDisplay) !important;
 }
 
+/* Encore design-system classes from the cloned button handle base layout,
+   sizing, hover, and focus states. We only need position:relative (for the
+   active-dot ::after) and the colour overrides for our active/disabled states. */
 .translateButton {
-    background-color: transparent;
-    border: none;
-    color: hsla(0,0%,100%,.7);
-    height: 32px;
     position: relative;
-    width: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.translateButton:focus-visible,.translateButton:hover {
-    color: #fff;
-    cursor: pointer;
+[data-testid='translate-button'][aria-pressed='true'] {
+    color: #1db954 !important;
 }
 
-.translateButton:focus-visible:active,.translateButton:hover:active {
-    color: hsla(0,0%,100%,.7)
+[data-testid='translate-button'][aria-pressed='true']:hover,
+[data-testid='translate-button'][aria-pressed='true']:focus {
+    color: #1ed760 !important;
 }
 
-.translateButton.RK45o6dbvO1mb0wQtSwq {
-    color: #1db954
+[data-testid='translate-button'][aria-pressed='true']:active {
+    color: hsla(0, 0%, 100%, .7) !important;
 }
 
-.translateButton.RK45o6dbvO1mb0wQtSwq:focus,.translateButton.RK45o6dbvO1mb0wQtSwq:hover {
-    color: #1ed760
-}
-
-.translateButton.RK45o6dbvO1mb0wQtSwq:active {
-    color: hsla(0,0%,100%,.7)
-}
-
-.translateButton.RK45o6dbvO1mb0wQtSwq:active:focus,.translateButton.RK45o6dbvO1mb0wQtSwq:active:hover {
-    color: #1db954
-}
-
-.translateButton.EHxL6K_6WWDlTCZP6x5w:after {
+[data-testid='translate-button'][aria-pressed='true']::after {
     background-color: #1db954;
     border-radius: 50%;
     bottom: 0;
@@ -87,15 +71,75 @@
     height: 4px;
     left: 50%;
     position: absolute;
-    -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
     width: 4px;
-    inline-size: 4px!important;
 }
 
 .translateButton[disabled] {
     cursor: not-allowed;
     opacity: 0.3;
-    transform: scale(1);
-    color: var(--text-subdued, #656565);
+}
+
+/* AI mode: static teal-to-lime diagonal gradient on the icon, but only while
+   translation is active. When deactivated the icon must fall back to the Encore
+   subdued colour, so this is scoped to [aria-pressed='true'] (same as the dot).
+   The gradient itself is defined in the SVG <defs> as #translatify-ai-gradient. */
+.translateButton--ai[aria-pressed='true'] path {
+    fill: url(#translatify-ai-gradient) !important;
+}
+
+/* AI mode active dot: match the icon gradient instead of solid green. */
+.translateButton--ai[aria-pressed='true']::after {
+    background: linear-gradient(135deg, #16c5d6 0%, #5fd391 50%, #a4d93f 100%);
+}
+
+/* 3-dot loading indicator pinned to the top-right corner of the translate button */
+.translatifyLoader {
+    display: none;
+    align-items: center;
+    gap: 2px;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+}
+
+.translatifyLoader.is-loading {
+    display: inline-flex;
+}
+
+.translatifyDot {
+    --dot-active-color: #1db954;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: hsla(0, 0%, 100%, .35);
+    animation: translatifyDotPulse 1.2s ease-in-out infinite;
+}
+
+.translatifyDot:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.translatifyDot:nth-child(3) {
+    animation-delay: .4s;
+}
+
+/* AI mode: each dot pulses to its own stop along the teal-to-lime gradient,
+   so the loader reads as the same gradient as the icon. */
+.translateButton--ai .translatifyDot:nth-child(1) { --dot-active-color: #16c5d6; }
+.translateButton--ai .translatifyDot:nth-child(2) { --dot-active-color: #5fd391; }
+.translateButton--ai .translatifyDot:nth-child(3) { --dot-active-color: #a4d93f; }
+
+@keyframes translatifyDotPulse {
+
+    0%,
+    100% {
+        background-color: hsla(0, 0%, 100%, .35);
+        transform: scale(.8);
+    }
+
+    50% {
+        background-color: var(--dot-active-color);
+        transform: scale(1);
+    }
 }
