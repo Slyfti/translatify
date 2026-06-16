@@ -107,6 +107,27 @@
     display: inline-flex;
 }
 
+/* Error marker: replaces the dots with a "!" when a translation fails. */
+.translatifyError {
+    display: none;
+    color: #ff6b81;
+    font-weight: bold;
+    font-size: 11px;
+    line-height: 1;
+}
+
+.translatifyLoader.has-error {
+    display: inline-flex;
+}
+
+.translatifyLoader.has-error .translatifyDot {
+    display: none;
+}
+
+.translatifyLoader.has-error .translatifyError {
+    display: inline;
+}
+
 .translatifyDot {
     --dot-active-color: #1db954;
     width: 3px;

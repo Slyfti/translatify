@@ -14,15 +14,27 @@ const translationCache = new Map();
 // AI batch translation cache
 const aiBatchCache = new Map();
 
+// In-flight TRANSLATE requests, keyed by cacheKey, so concurrent identical
+// requests (e.g. repeated chorus lines) collapse into a single network call
+// instead of each missing the not-yet-populated cache and firing their own.
+const inFlightTranslations = new Map();
+
 // Active mutation observers
 const mutationObservers = new Map();
 
 // To modify if spotify decides to change variable names
 const lyricLine = "div[data-testid='lyrics-line']";
 
-// True while an AI batch translation is in flight — prevents the MutationObserver
-// from falling back to Google Translate for lines that appear during the wait.
+// True while an AI batch translation is in flight. Used as a re-entrancy guard in
+// translate() so overlapping UI events don't kick off a second pass during the wait.
+// Lines that appear mid-wait are intentionally Google-translated for responsiveness
+// and replaced with the AI result once the batch resolves.
 let aiBatchPending = false;
+
+// When true (default), AI mode shows Google translations immediately while the AI
+// batch loads. When false, lyrics stay untranslated until the AI result arrives and
+// the MutationObserver does not Google-translate lines that appear during the wait.
+let aiFailoverEnabled = true;
 
 // Re-entrancy guard for translate(), set before any await.
 let translateInFlight = false;
@@ -77,27 +89,41 @@ async function translateText(text, sourceLanguage, destinationLanguage) {
         return translationCache.get(cacheKey);
     }
 
+    // Collapse concurrent identical requests (repeated lines) into one network call.
+    if (inFlightTranslations.has(cacheKey)) {
+        return inFlightTranslations.get(cacheKey);
+    }
+
     if (!isExtensionAlive()) return null;
 
-    let response;
+    const requestPromise = (async () => {
+        let response;
+        try {
+            response = await chrome.runtime.sendMessage({
+                type: 'TRANSLATE',
+                text,
+                sourceLanguage,
+                destinationLanguage
+            });
+        } catch {
+            return null;
+        }
+
+        if (!response || response.error) {
+            if (response?.error) console.error('Error:', response.error);
+            return null;
+        }
+
+        translationCache.set(cacheKey, response.result);
+        return response.result;
+    })();
+
+    inFlightTranslations.set(cacheKey, requestPromise);
     try {
-        response = await chrome.runtime.sendMessage({
-            type: 'TRANSLATE',
-            text,
-            sourceLanguage,
-            destinationLanguage
-        });
-    } catch {
-        return null;
+        return await requestPromise;
+    } finally {
+        inFlightTranslations.delete(cacheKey);
     }
-
-    if (!response || response.error) {
-        if (response?.error) console.error('Error:', response.error);
-        return null;
-    }
-
-    translationCache.set(cacheKey, response.result);
-    return response.result;
 }
 
 function getSongInfo() {
@@ -152,6 +178,37 @@ async function translateBatchWithAI(lines, sourceLanguage, destinationLanguage) 
     const translations = response.translations || [];
     aiBatchCache.set(cacheKey, translations);
     return translations;
+}
+
+// Clear cached translations, then restore and re-translate so fresh results are
+// fetched. scope 'all' wipes every cache; scope 'song' clears only the entries for
+// the currently-playing song.
+function clearTranslationCache(scope) {
+    if (scope === 'all') {
+        translationCache.clear();
+        aiBatchCache.clear();
+    } else {
+        // Drop line-level entries for the visible lyrics. A translated wrapper keeps
+        // its original text in .originalLyrics; an untranslated one in firstChild.
+        document.querySelectorAll(lyricLine).forEach(wrapper => {
+            const original = wrapper.querySelector('.originalLyrics');
+            const text = original ? original.innerText : (wrapper.firstChild?.textContent || '');
+            if (!text) return;
+            for (const key of translationCache.keys()) {
+                if (key.startsWith(`${text}|`)) translationCache.delete(key);
+            }
+        });
+        // Drop AI batch entries for the current song (key ends with |<songTitle>).
+        const { songTitle } = getSongInfo();
+        if (songTitle) {
+            for (const key of aiBatchCache.keys()) {
+                if (key.endsWith(`|${songTitle}`)) aiBatchCache.delete(key);
+            }
+        }
+    }
+    // restoreLyrics() also resets lastAiSong so AI re-runs for this song.
+    restoreLyrics();
+    translate();
 }
 
 function disconnectAllObservers() {
@@ -227,7 +284,9 @@ async function setupMutationObserver() {
                 const cacheKey = `${lyricsText}|${sourceLanguage}|${destinationLanguage}`;
                 if (translationCache.has(cacheKey)) {
                     replaceLyric(translationCache.get(cacheKey), node);
-                } else {
+                } else if (!(aiBatchPending && !aiFailoverEnabled)) {
+                    // Skip Google fallback for new lines while an AI batch is in flight
+                    // and failover is disabled — the AI result will translate them.
                     translateAndUpdateAsync(node, lyricsText, sourceLanguage, destinationLanguage);
                 }
                 focusActiveLyric();
@@ -344,17 +403,44 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
 
     aiBatchPending = true;
 
+    // Failover (on by default): Google-translate ALL current lyrics concurrently while
+    // the (slower) AI batch runs, so the user sees results immediately instead of
+    // staring at a blank wait. This renders progressively; the AI result overwrites it
+    // once it lands. When disabled, lyrics stay untranslated until the AI result arrives.
+    try {
+        const stored = await chrome.storage.local.get(['aiFailover']);
+        aiFailoverEnabled = stored.aiFailover !== undefined ? stored.aiFailover : true;
+    } catch {
+        aiFailoverEnabled = true;
+    }
+
+    const googlePass = aiFailoverEnabled
+        ? translateLineByLineWithGoogle(sourceLanguage, destinationLanguage)
+            .catch(err => console.error('Translatify: Google pre-pass error:', err))
+        : Promise.resolve();
+
     const translations = await translateBatchWithAI(lines, sourceLanguage, destinationLanguage);
 
     aiBatchPending = false;
 
     if (!translations || !Array.isArray(translations)) {
         console.warn('Translatify: AI batch returned non-array, falling back to Google');
-        await translateLineByLineWithGoogle(sourceLanguage, destinationLanguage);
-        return;
+        // With failover on, the Google pass already translated every line — just let it
+        // finish. With failover off, nothing was translated, so run Google now.
+        if (aiFailoverEnabled) {
+            await googlePass;
+        } else {
+            await translateLineByLineWithGoogle(sourceLanguage, destinationLanguage);
+        }
+        // Signal that the AI endpoint failed so the button can show an error marker.
+        return false;
     }
 
     if (hasSongId) lastAiSong = songId;
+
+    // Let every Google response land before making the AI result authoritative, so a
+    // late Google write can't clobber the AI translation in translationCache.
+    await googlePass;
 
     // Populate line-level cache from the AI batch so the MutationObserver picks
     // up AI translations instead of falling back to Google.
@@ -436,16 +522,20 @@ async function runTranslate() {
         const settings = await chrome.storage.local.get(['translationProvider', 'aiEndpoint']);
         // Show the loading indicator only while lyrics are actually being fetched/rendered.
         setTranslatingIndicator(true);
+        let aiErrored = false;
         try {
             if (settings.translationProvider === 'customAI' && settings.aiEndpoint) {
-                await translateBatchWithAIAndRender(sourceLanguage, destinationLanguage);
+                aiErrored = (await translateBatchWithAIAndRender(sourceLanguage, destinationLanguage)) === false;
             } else {
                 await translateLineByLineWithGoogle(sourceLanguage, destinationLanguage);
             }
         } finally {
             setTranslatingIndicator(false);
         }
+        // Swap the loading dots for an error marker when the AI endpoint failed.
+        if (aiErrored) setTranslateError(true);
     } else if (translateButton.getAttribute("aria-pressed") == "false") {
+        setTranslateError(false);
         restoreLyrics();
         focusActiveLyric();
     }

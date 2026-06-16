@@ -11,9 +11,18 @@ function eraseButton() {
 }
 
 // Shows/hides the 3-dot loading indicator while lyrics are being translated.
+// Starting a new translation also clears any previous error marker.
 function setTranslatingIndicator(active) {
     const loader = document.querySelector("span[data-testid='translate-loading']");
-    if (loader) loader.classList.toggle("is-loading", !!active);
+    if (!loader) return;
+    loader.classList.toggle("is-loading", !!active);
+    if (active) loader.classList.remove("has-error");
+}
+
+// Shows/hides the "!" error marker on the translate button (e.g. AI endpoint failed).
+function setTranslateError(active) {
+    const loader = document.querySelector("span[data-testid='translate-loading']");
+    if (loader) loader.classList.toggle("has-error", !!active);
 }
 
 // Toggles the rainbow-hue AI indicator class on the translate button.
@@ -147,7 +156,7 @@ function addTranslateButton() {
     loader.setAttribute("data-testid", "translate-loading");
     loader.className = "translatifyLoader";
     loader.setAttribute("aria-hidden", "true");
-    loader.innerHTML = '<span class="translatifyDot"></span>'.repeat(3);
+    loader.innerHTML = '<span class="translatifyDot"></span>'.repeat(3) + '<span class="translatifyError" aria-hidden="true">!</span>';
     translateButton.appendChild(loader);
 
     translateButton.addEventListener('click', toggleTranslateButton);

@@ -123,5 +123,41 @@
     "thinkModeOff": {
         "message": "Off",
         "description": "Thinking mode toggle - off state"
+    },
+    "aiFailover": {
+        "message": "Instant preview",
+        "description": "Label for the AI failover toggle"
+    },
+    "failoverOn": {
+        "message": "On",
+        "description": "Failover toggle - on state"
+    },
+    "failoverOff": {
+        "message": "Off",
+        "description": "Failover toggle - off state"
+    },
+    "clearSongCache": {
+        "message": "Clear current song cache",
+        "description": "Button to clear the cached translations for the current song"
+    },
+    "clearAllCache": {
+        "message": "Clear all cache",
+        "description": "Button to clear all cached translations"
+    },
+    "debugTitle": {
+        "message": "Debug",
+        "description": "Title for the debug section"
+    },
+    "clearStorage": {
+        "message": "Clear extension storage",
+        "description": "Debug button to clear all saved extension settings"
+    },
+    "clearStorageHint": {
+        "message": "Erases all saved settings: target language, lyrics mode & font size, translation provider, and your AI endpoint, API key, model, and toggles. The extension resets to defaults.",
+        "description": "Explanation of what clearing the extension storage removes"
+    },
+    "confirmClear": {
+        "message": "Click again to confirm",
+        "description": "Confirmation prompt shown on a clear-cache button after the first click"
     }
 }

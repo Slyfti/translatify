@@ -10,6 +10,29 @@ loadChecker();
 run();
 console.log("Translatify: Lyrics Translator is running..");
 
+// Determine the default target language from the browser's preferred languages.
+// navigator.languages / navigator.language are supported on both Chromium and
+// Firefox. The result is normalized to a code the language selector recognizes,
+// and falls back to English when nothing usable is found.
+function getBrowserLanguage() {
+    const candidates = [];
+    if (Array.isArray(navigator.languages)) candidates.push(...navigator.languages);
+    if (navigator.language) candidates.push(navigator.language);
+
+    for (const raw of candidates) {
+        if (!raw) continue;
+        const lower = raw.toLowerCase();
+        const base = lower.split('-')[0];
+        if (!base) continue;
+        // Chinese options are split into Simplified / Traditional.
+        if (base === 'zh') {
+            return /-(tw|hk|mo)\b/.test(lower) || lower.includes('hant') ? 'zh-TW' : 'zh-CN';
+        }
+        return base;
+    }
+    return 'en';
+}
+
 function run() {
     // First install cases
     chrome.storage.local.get(['translateButton'], (result) => {
@@ -22,7 +45,7 @@ function run() {
     }
     );
     chrome.storage.local.get(['language'], (result) => {
-        let defaultLanguage = navigator.language;
+        let defaultLanguage = getBrowserLanguage();
         if (result.language == null) {
             chrome.storage.local.set({ language: defaultLanguage }, () => {
                 console.log("Translatify: Language is set to default");
@@ -119,6 +142,18 @@ function run() {
             console.log("Translatify: AI think mode updated to", msgObj.updateAiThinkMode);
             restoreLyrics();
             translate();
+        }
+
+        if (msgObj.updateAiFailover !== undefined) {
+            console.log("Translatify: AI failover updated to", msgObj.updateAiFailover);
+            aiFailoverEnabled = msgObj.updateAiFailover;
+            restoreLyrics();
+            translate();
+        }
+
+        if (msgObj.clearCache) {
+            console.log("Translatify: clearing cache:", msgObj.clearCache);
+            clearTranslationCache(msgObj.clearCache);
         }
     });
 }

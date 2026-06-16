@@ -17,6 +17,10 @@ const aiModel = document.getElementById('aiModel');
 const aiTestConnection = document.getElementById('aiTestConnection');
 const aiTestStatus = document.getElementById('aiTestStatus');
 const aiThinkMode = document.getElementById('aiThinkMode');
+const aiFailover = document.getElementById('aiFailover');
+const clearSongCache = document.getElementById('clearSongCache');
+const clearAllCache = document.getElementById('clearAllCache');
+const clearStorage = document.getElementById('clearStorage');
 
 $(document).ready(function() {
     // Render the dropdown inside the .optionDiv so the (nested) select2 CSS
@@ -35,12 +39,32 @@ $(document).ready(function(){
 
  });
 
+// Default the dropdown to the browser language (Chromium + Firefox) when nothing
+// is stored yet, falling back to English. Mirrors getBrowserLanguage() in main.js.
+function getBrowserLanguage() {
+    const candidates = [];
+    if (Array.isArray(navigator.languages)) candidates.push(...navigator.languages);
+    if (navigator.language) candidates.push(navigator.language);
+
+    for (const raw of candidates) {
+        if (!raw) continue;
+        const lower = raw.toLowerCase();
+        const base = lower.split('-')[0];
+        if (!base) continue;
+        if (base === 'zh') {
+            return /-(tw|hk|mo)\b/.test(lower) || lower.includes('hant') ? 'zh-TW' : 'zh-CN';
+        }
+        return base;
+    }
+    return 'en';
+}
+
 chrome.storage.local.get(['language'], (result) => {
     if (result.language) {
         languageSelector.value = result.language;
         $("#languageSelector").val(result.language).trigger("change");
     } else {
-        $("#languageSelector").val("en").trigger('change');
+        $("#languageSelector").val(getBrowserLanguage()).trigger('change');
     }
 }
 );
@@ -71,7 +95,7 @@ chrome.storage.local.get(['translateButton'], (result) => {
 });
 
 // Load AI provider settings
-chrome.storage.local.get(['translationProvider', 'aiEndpoint', 'aiApiKey', 'aiModel', 'aiThinkMode'], (result) => {
+chrome.storage.local.get(['translationProvider', 'aiEndpoint', 'aiApiKey', 'aiModel', 'aiThinkMode', 'aiFailover'], (result) => {
     if (result.translationProvider) {
         translationProvider.value = result.translationProvider;
     }
@@ -87,6 +111,8 @@ chrome.storage.local.get(['translationProvider', 'aiEndpoint', 'aiApiKey', 'aiMo
     if (result.aiThinkMode !== undefined) {
         aiThinkMode.checked = result.aiThinkMode;
     }
+    // Failover (instant Google translation while AI loads) is on by default.
+    aiFailover.checked = result.aiFailover !== undefined ? result.aiFailover : true;
     aiSettings.style.display = translationProvider.value === 'customAI' ? 'block' : 'none';
 });
 
@@ -163,6 +189,69 @@ aiThinkMode.addEventListener('change', async () => {
     const thinkMode = aiThinkMode.checked;
     await chrome.storage.local.set({aiThinkMode: thinkMode});
     sendToSpotifyTabs({ updateAiThinkMode: thinkMode });
+});
+
+aiFailover.addEventListener('change', async () => {
+    const failover = aiFailover.checked;
+    await chrome.storage.local.set({aiFailover: failover});
+    sendToSpotifyTabs({ updateAiFailover: failover });
+});
+
+// Briefly show a checkmark on a button to confirm the action ran.
+function flashButton(button) {
+    if (button.dataset.flashing) return;
+    button.dataset.flashing = '1';
+    const original = button.textContent;
+    button.textContent = '✓';
+    setTimeout(() => {
+        button.textContent = original;
+        delete button.dataset.flashing;
+    }, 1200);
+}
+
+// Two-step confirm: the first click swaps the label to a confirm prompt; a second
+// click within the window runs the action. The prompt reverts on timeout.
+function confirmAction(button, onConfirm) {
+    if (button.dataset.confirming) {
+        clearTimeout(Number(button.dataset.confirmTimer));
+        button.textContent = button.dataset.confirmOriginal;
+        button.classList.remove('confirming');
+        delete button.dataset.confirming;
+        delete button.dataset.confirmTimer;
+        delete button.dataset.confirmOriginal;
+        onConfirm();
+        flashButton(button);
+        return;
+    }
+    button.dataset.confirmOriginal = button.textContent;
+    button.dataset.confirming = '1';
+    button.textContent = chrome.i18n.getMessage('confirmClear') || 'Click again to confirm';
+    button.classList.add('confirming');
+    button.dataset.confirmTimer = String(setTimeout(() => {
+        button.textContent = button.dataset.confirmOriginal;
+        button.classList.remove('confirming');
+        delete button.dataset.confirming;
+        delete button.dataset.confirmTimer;
+        delete button.dataset.confirmOriginal;
+    }, 3000));
+}
+
+clearSongCache.addEventListener('click', () => {
+    confirmAction(clearSongCache, () => sendToSpotifyTabs({ clearCache: 'song' }));
+});
+
+clearAllCache.addEventListener('click', () => {
+    confirmAction(clearAllCache, () => sendToSpotifyTabs({ clearCache: 'all' }));
+});
+
+// Debug: wipe all saved settings (chrome.storage), resetting the extension to
+// defaults, then reload the popup so the controls reflect the cleared state.
+clearStorage.addEventListener('click', () => {
+    confirmAction(clearStorage, async () => {
+        try { await chrome.storage.local.clear(); } catch {}
+        try { await chrome.storage.sync.clear(); } catch {}
+        setTimeout(() => window.location.reload(), 800);
+    });
 });
 
 aiTestConnection.addEventListener('click', async () => {

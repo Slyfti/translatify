@@ -163,6 +163,30 @@ h4.subtitle {
         background-color: var(--button-bg-hover);
     }
 
+    .cacheControls {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    button.danger {
+        border-color: rgba(224, 64, 94, 0.25);
+        color: #ff6b81;
+    }
+
+    button.danger:not(:disabled):hover {
+        background-color: #e0405e;
+        color: #fff;
+    }
+
+    /* Awaiting a second click to confirm a cache clear. */
+    button.confirming {
+        border-color: rgba(224, 64, 94, 0.40);
+        color: #ff6b81;
+        background-color: rgba(224, 64, 94, 0.12);
+    }
+
     select {
         height: var(--control-height);
         width: 100%;
@@ -237,6 +261,10 @@ h4.subtitle {
 
     .toggle-row h4 {
         margin: 0;
+    }
+
+    .toggle-row+.toggle-row {
+        margin-top: 12px;
     }
 
     .switch-group {

@@ -34,6 +34,25 @@
     </div>
 
     <div class="optionDiv">
+        <div class="toggle-row">
+          <h4 data-locale="translateToggle">Lyrics translation
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
+          </svg>
+          </h4>
+          <div class="switch-group">
+            <span class="switch-label" data-locale="translationOff">Off</span>
+            <label class="switch">
+              <input type="checkbox" id="translateToggle">
+              <span class="slider round"></span>
+            </label>
+            <span class="switch-label" data-locale="translationOn">On</span>
+          </div>
+        </div>
+    </div>
+
+    <div class="optionDiv">
       <h4 data-locale="translationProvider">Translation Provider</h4>
       <select name="translationProvider" id="translationProvider" class="selectOptions">
         <option value="google" data-locale="providerGoogle">Google Translate</option>
@@ -63,28 +82,26 @@
           </div>
         </div>
 
+        <div class="toggle-row">
+          <h4 class="subtitle" data-locale="aiFailover">Instant preview</h4>
+          <div class="switch-group">
+            <span class="switch-label" data-locale="failoverOff">Off</span>
+            <label class="switch">
+              <input type="checkbox" id="aiFailover" checked>
+              <span class="slider round"></span>
+            </label>
+            <span class="switch-label" data-locale="failoverOn">On</span>
+          </div>
+        </div>
+
         <button id="aiTestConnection" data-locale="aiTestConnection">Test Connection</button>
         <span id="aiTestStatus"></span>
       </div>
-    </div>
 
-    <div class="optionDiv">
-        <div class="toggle-row">
-          <h4 data-locale="translateToggle">Lyrics translation
-          <svg viewBox="0 0 24 24">
-            <path
-              d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
-          </svg>
-          </h4>
-          <div class="switch-group">
-            <span class="switch-label" data-locale="translationOff">Off</span>
-            <label class="switch">
-              <input type="checkbox" id="translateToggle">
-              <span class="slider round"></span>
-            </label>
-            <span class="switch-label" data-locale="translationOn">On</span>
-          </div>
-        </div>
+      <div class="cacheControls">
+        <button id="clearSongCache" data-locale="clearSongCache">Clear current song cache</button>
+        <button id="clearAllCache" class="danger" data-locale="clearAllCache">Clear all cache</button>
+      </div>
     </div>
 
     <div class="optionDiv">
@@ -274,6 +291,12 @@
     <a href= "https://chromewebstore.google.com/detail/spotify-lyrics-translator/odglneiicjonedgaldglaalgagkhanmi/reviews">
       <button data-locale="reviewLink">Please leave a review !</button>
     </a>
+  </div>
+
+  <div class="optionDiv">
+    <h4 data-locale="debugTitle">Debug</h4>
+    <span class="aiHint" data-locale="clearStorageHint">Erases all saved settings: target language, lyrics mode &amp; font size, translation provider, and your AI endpoint, API key, model, and toggles. The extension resets to defaults.</span>
+    <button id="clearStorage" class="danger" data-locale="clearStorage">Clear extension storage</button>
   </div>
 
   </div>
