@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index, follow">
+  <title>Translatify: Spotify Lyrics Translator</title>
+  <meta name="description"
+    content="Translatify translates Spotify Web Player lyrics in real time, right inside the player, in your language. Free, open source, and local">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icon-32.png">
+  <link rel="icon" type="image/png" sizes="128x128" href="images/icon-128.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Translatify — Understand every song">
+  <meta property="og:description"
+    content="Translate Spotify lyrics in real time, in your language. Free and open source.">
+  <meta property="og:image" content="images/Translatify_banner.png">
+
+  <!-- Inline critical CSS: correct first paint before styles.css arrives -->
+  <style>
+    :root {
+      --bg: #0D0D0D;
+      --text: #F0EDE8;
+    }
+
+    html {
+      background: #0D0D0D;
+    }
+
+    body {
+      margin: 0;
+      background: #0D0D0D;
+      color: #F0EDE8;
+      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+      font-weight: 300;
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;800&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap site-header__inner">
+      <a class="brand" href="index.html" aria-label="Translatify — home">
+        <img class="brand__logo" src="images/Translatify_banner.png" alt="Translatify" width="700" height="160">
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="privacy-policy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="https://github.com/Slyfti/translatify" rel="noopener">GitHub</a>
+      </nav>
+      <div class="actions">
+        <a class="btn btn--primary"
+          href="https://chromewebstore.google.com/detail/translatify-spotify-lyric/odglneiicjonedgaldglaalgagkhanmi"
+          rel="noopener">Add to Chrome</a>
+        <a class="btn btn--ghost" href="https://addons.mozilla.org/en-US/firefox/addon/translatify-for-spotify/"
+          rel="noopener">Add to Firefox</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap">
+        <h1 class="hero__headline">
+          <img class="hero__logo" src="images/Translatify_banner.png" alt="Translatify" width="700" height="160">
+        </h1>
+
+        <div class="demo" id="demo" aria-hidden="true">
+          <p class="demo__meta">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" />
+            </svg>
+            <span class="demo__lang">French</span>
+            <span class="demo__arrow">→</span>
+            <span>English</span>
+          </p>
+          <div class="demo__lines"></div>
+        </div>
+
+        <p class="hero__sub">Translatify translates Spotify lyrics in real time, right inside your player.</p>
+
+        <div class="hero__cta">
+          <a class="btn btn--primary btn--lg"
+            href="https://chromewebstore.google.com/detail/translatify-spotify-lyric/odglneiicjonedgaldglaalgagkhanmi"
+            rel="noopener">Add to Chrome</a>
+          <a class="btn btn--ghost btn--lg"
+            href="https://addons.mozilla.org/en-US/firefox/addon/translatify-for-spotify/" rel="noopener">Add to
+            Firefox</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section" id="features">
+      <div class="wrap">
+        <p class="section__eyebrow">How it works</p>
+        <h2 class="section__title">Three steps, and you're good to go!</h2>
+        <ol class="steps">
+          <li class="step">
+            <span class="step__num">01</span>
+            <p>Install the extension from the Chrome Web Store or Firefox Add-ons.</p>
+          </li>
+          <li class="step">
+            <span class="step__num">02</span>
+            <p>Open the popup and choose the language you want your lyrics translated into.</p>
+          </li>
+          <li class="step">
+            <span class="step__num">03</span>
+            <p>Play any song with lyrics, and let Translatify translate them automatically as they scroll.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section class="section section--feature">
+      <div class="read">
+        <p class="section__eyebrow">Simplicity first</p>
+        <h2 class="section__title">No backend server,<br> no problems!</h2>
+        <p class="section__lead">There is no backend server and no data collection. Translatify uses your own
+          translation API key and stores everything locally: your language, your key, your cached translations.
+        </p>
+        <a class="btn btn--ghost" href="privacy-policy.html">Read privacy policy</a>
+      </div>
+    </section>
+
+    <!-- Github repo -->
+    <section class="section section--feature">
+      <div class="read">
+        <p class="section__eyebrow">source code</p>
+        <h2 class="section__title">GitHub repo</h2>
+        <p class="section__lead">Available <a href="https://github.com/Slyfti/translatify" rel="noopener">here</a>.</p>
+
+        <ul class="gh-stats" aria-label="GitHub repository stats">
+          <li>
+            <a class="gh-stat" href="https://github.com/Slyfti/translatify/stargazers" rel="noopener">
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                  d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+              </svg>
+              <span class="gh-stat__label">Stars</span>
+              <span class="gh-stat__count" data-stat="stars">—</span>
+            </a>
+          </li>
+          <li>
+            <a class="gh-stat" href="https://github.com/Slyfti/translatify/issues" rel="noopener">
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+                <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
+              </svg>
+              <span class="gh-stat__label">Issues</span>
+              <span class="gh-stat__count" data-stat="issues">—</span>
+            </a>
+          </li>
+        </ul>
+
+        <a class="btn btn--ghost" href="https://github.com/Slyfti/translatify" rel="noopener">View on GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+        <a href="https://github.com/Slyfti/translatify" rel="noopener">GitHub</a>
+        <a href="https://chromewebstore.google.com/detail/translatify-spotify-lyric/odglneiicjonedgaldglaalgagkhanmi"
+          rel="noopener">Chrome Store</a>
+        <a href="https://addons.mozilla.org/en-US/firefox/addon/translatify-for-spotify/" rel="noopener">Firefox
+          Add-ons</a>
+      </nav>
+      <p class="site-footer__legal">© 2026 Translatify. Free and open source.</p>
+      <p class="site-footer__note">Not affiliated with Spotify AB.</p>
+    </div>
+  </footer>
+
+  <script src="hero.js" defer></script>
+  <script src="github-stats.js" defer></script>
+</body>
+
+</html>

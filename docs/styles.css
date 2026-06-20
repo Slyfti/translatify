@@ -1,0 +1,579 @@
+/* ==========================================================================
+   Translatify — site styles
+   Shared by index.html, privacy-policy.html, terms.html.
+   Dark, editorial, native to Spotify's world. No cards. No gradients.
+   ========================================================================== */
+
+:root {
+  /* Palette */
+  --bg: #0D0D0D;
+  --text: #F0EDE8;
+  --muted: #a39f97;
+  /* secondary text, ~7:1 on --bg */
+  --green: #1DB954;
+  /* Spotify accent */
+  --green-bright: #1ED760;
+  /* hover */
+  --purple: #6B5FA6;
+  /* muted secondary */
+  --border: rgba(240, 237, 232, 0.12);
+  --border-strong: rgba(240, 237, 232, 0.24);
+
+  /* Type */
+  --font-body: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-display: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+
+  /* Rhythm */
+  --section-y: clamp(4rem, 10vw, 8rem);
+  --wrap: 1080px;
+  --read: 720px;
+}
+
+/* --------------------------------------------------------------------------
+   Reset / base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--green);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--green-bright);
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--green);
+  color: var(--bg);
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  z-index: 100;
+  border-radius: 0 0 6px 0;
+}
+
+.skip-link:focus {
+  left: 0;
+  text-decoration: none;
+}
+
+.wrap {
+  width: min(100% - 2.5rem, var(--wrap));
+  margin-inline: auto;
+}
+
+.read {
+  width: min(100% - 2.5rem, var(--read));
+  margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+.site-header {
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  flex-wrap: wrap;
+  padding: 1.1rem 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  /* Fallback styling if the banner image fails to load (alt text shows). */
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.brand:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand__logo {
+  height: 30px;
+  width: auto;
+}
+
+.nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-right: auto;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.nav a:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: var(--green);
+  color: #08120b;
+}
+
+.btn--primary:hover {
+  background: var(--green-bright);
+  color: #08120b;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.btn--ghost:hover {
+  border-color: var(--purple);
+  color: var(--text);
+}
+
+.btn--lg {
+  padding: 0.9rem 1.6rem;
+  font-size: 1.02rem;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+.hero {
+  padding: clamp(5rem, 12vw, 9rem) 0 var(--section-y);
+  text-align: center;
+}
+
+.hero__headline {
+  font-size: clamp(2.6rem, 8vw, 5rem);
+  margin-bottom: 1.2rem;
+}
+
+.hero__logo {
+  display: block;
+  width: min(100%, 480px);
+  height: auto;
+  margin-inline: auto;
+}
+
+.hero__sub {
+  color: var(--muted);
+  font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+  max-width: 38ch;
+  margin: 0 auto 2.5rem;
+}
+
+.hero__cta {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2.5rem;
+}
+
+/* Lyric demo — the one orchestrated moment */
+.demo {
+  width: min(100%, 540px);
+  margin: 0 auto;
+  text-align: left;
+  border-left: 2px solid rgba(29, 185, 84, 0.45);
+  padding: 0.4rem 0 0.4rem 1.5rem;
+}
+
+.demo__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+}
+
+.demo__meta svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--green);
+  flex: none;
+}
+
+.demo__lang {
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.demo__arrow {
+  color: var(--muted);
+}
+
+.demo__lines {
+  min-height: 9.5rem;
+}
+
+.line {
+  display: grid;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.25rem, 3.4vw, 1.7rem);
+  line-height: 1.45;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.line.show {
+  opacity: 1;
+  transform: none;
+}
+
+.line__orig,
+.line__trans {
+  grid-area: 1 / 1;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.line__orig {
+  color: var(--muted);
+}
+
+.line__trans {
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.line.translated .line__orig {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.line.translated .line__trans {
+  opacity: 1;
+  transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   Sections
+   -------------------------------------------------------------------------- */
+.section {
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--border);
+}
+
+.section__eyebrow {
+  color: var(--green);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.section__title {
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  margin-bottom: 1.5rem;
+  max-width: 80ch;
+}
+
+.section__lead {
+  color: var(--muted);
+  font-size: 1.1rem;
+  max-width: 56ch;
+}
+
+/* How it works */
+.steps {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 760px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+  }
+}
+
+.step__num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2.6rem;
+  color: var(--green);
+  line-height: 1;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.step p {
+  color: var(--text);
+  margin: 0;
+}
+
+/* Privacy + open source share a centered narrow layout */
+.section--feature {
+  text-align: center;
+}
+
+.section--feature .section__title {
+  margin-inline: auto;
+}
+
+.section--feature .section__lead {
+  margin: 0 auto 2rem;
+}
+
+/* GitHub stat pills — same numbers as GitHub's buttons, the site's colors */
+.gh-stats {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+}
+
+.gh-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.05rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: rgba(240, 237, 232, 0.03);
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.gh-stat:hover {
+  border-color: var(--green);
+  background: rgba(29, 185, 84, 0.08);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.gh-stat svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--green);
+  flex: none;
+}
+
+.gh-stat__label {
+  color: var(--muted);
+}
+
+.gh-stat__count {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Legal pages (prose)
+   -------------------------------------------------------------------------- */
+.legal {
+  padding-block: clamp(3rem, 8vw, 6rem);
+}
+
+.legal__updated {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 2.5rem;
+}
+
+.legal h1 {
+  font-size: clamp(2.2rem, 6vw, 3.2rem);
+  margin-bottom: 0.75rem;
+}
+
+.legal h2 {
+  font-size: 1.5rem;
+  margin: 2.75rem 0 0.9rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.legal h2:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.legal p,
+.legal li {
+  color: var(--text);
+}
+
+.legal .muted {
+  color: var(--muted);
+}
+
+.legal ul {
+  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+}
+
+.legal li {
+  margin-bottom: 0.6rem;
+}
+
+.legal strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding-block: 3rem;
+  text-align: center;
+}
+
+.footer-nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-nav a {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.footer-nav a:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.site-footer__legal {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.site-footer__note {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin: 0.5rem 0 0;
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — freeze the hero into its translated state
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+  .line,
+  .line__orig,
+  .line__trans {
+    transition: none;
+  }
+}
