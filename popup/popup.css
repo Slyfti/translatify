@@ -48,7 +48,28 @@ body {
     color: var(--text);
     font-family: var(--font);
     width: 350px;
+    max-width: 100vw;
+    box-sizing: border-box;
     font-weight: normal;
+}
+
+/* On Firefox for Android the popup renders as a full-screen page, so let the
+   body fill the device width instead of staying pinned to 350px. Option cards
+   stay capped so they don't stretch edge-to-edge on wide screens. Keyed on
+   touch input rather than viewport width because the desktop popup viewport
+   is itself only 350px wide and must keep its current layout. */
+@media (hover: none) and (pointer: coarse) {
+    body {
+        width: 100vw;
+    }
+
+    .optionDiv {
+        width: 100%;
+        max-width: 360px;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+    }
 }
 
 h1 {

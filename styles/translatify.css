@@ -29,8 +29,12 @@
     line-height: var(--newLyricsLineHeight) !important;
 }
 
-.newLyrics:hover {
-    opacity: 0.5;
+/* Hover effects only on devices that actually hover, to avoid sticky-hover
+   states on touch screens (Firefox for Android). */
+@media (hover: hover) {
+    .newLyrics:hover {
+        opacity: 0.5;
+    }
 }
 
 .EhKgYshvOwpSrTv399Mw>.newLyrics {
@@ -53,7 +57,12 @@
     color: #1db954 !important;
 }
 
-[data-testid='translate-button'][aria-pressed='true']:hover,
+@media (hover: hover) {
+    [data-testid='translate-button'][aria-pressed='true']:hover {
+        color: #1ed760 !important;
+    }
+}
+
 [data-testid='translate-button'][aria-pressed='true']:focus {
     color: #1ed760 !important;
 }

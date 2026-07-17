@@ -14,7 +14,7 @@ Note: After two years, [Spotify will finally integrate lyrics translations for a
 - Real-time translation of lyrics displayed in the Spotify Web Player.
 - Multilingual support: choose your target language.
 - Simple and intuitive interface.
-- Compatible with Google Chrome and Mozilla Firefox.
+- Compatible with Google Chrome, Mozilla Firefox, and Firefox for Android.
 
 ---
 
@@ -50,6 +50,12 @@ The extension is now installed and ready to use!
 4. Select the `manifest.json` file from the project folder.
 
 The extension is now active.
+
+### **For Firefox on Android:**
+
+Requires Firefox for Android 128 or newer. Install the extension from the [AMO listing](https://addons.mozilla.org/en-US/firefox/addon/translatify-for-spotify/) like any other add-on.
+
+> **Note:** Spotify serves Android browsers a reduced mobile web player that does not expose lyrics. To translate lyrics on your phone, open `open.spotify.com`, then enable **Request desktop site** from the Firefox menu.
 
 ---
 
