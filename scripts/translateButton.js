@@ -96,18 +96,15 @@ let listeningObserver = null;
 // Last now-playing track key; re-translate only when the song actually changes.
 let lastNowPlayingKey = '';
 
-// Debounce for the untranslated-lyrics catch-up pass scheduled by the observer.
-let retranslatePending = false;
-
 // Idempotent if called repeatedly. Holds one observer reference.
 function setupListening() {
     if (listeningObserver) return; // already observing — nothing to do
 
     // Anchor that survives every Spotify re-render, so the observer never needs
     // re-attaching.
-    const anchor = document.querySelector("#main-view") || document.querySelector("#main");
+    const anchor = document.documentElement;
     if (!anchor) {
-        // #main-view/#main not present yet — poll until the app shell mounts.
+        // root not present yet — poll until the app shell mounts.
         return setTimeout(setupListening, 300);
     }
 
@@ -117,6 +114,11 @@ function setupListening() {
         if (event.target.closest("button")) {
             enableTranslateButton();
             translate();
+            // Literal double check with delay to let lyrics mount (e.g. lyrics toggle)
+            setTimeout(() => {
+                enableTranslateButton();
+                translate();
+            }, 300);
         }
     });
 
@@ -135,21 +137,21 @@ function setupListening() {
 
     // One observer over the whole subtree, childList only (attributes would
     // flood the callback with highlight/progress churn).
-    const observer = new MutationObserver(() => {
-        ensureTranslateButton();            // re-inject only if missing (idempotent)
+    const observer = new MutationObserver((mutations) => {
+        const isChildList = mutations.some(m => m.type === 'childList');
+        
+        if (isChildList) {
+            ensureTranslateButton();            // re-inject only if missing (idempotent)
+            
+            if (typeof processLyricsMutations === 'function') {
+                processLyricsMutations(mutations);
+            }
+        }
+
         if (songChanged()) {
             setTimeout(translate, 100);     // new song → re-translate lyrics
         }
-        // Catch-all for the lyrics view (re)opening, when untranslated lines
-        // appear with no other trigger. Debounced.
-        if (!retranslatePending && !retranslateGuard) {
-            const translateButton = document.querySelector("button[data-testid='translate-button']");
-            if (translateButton?.getAttribute("aria-pressed") === "true" &&
-                document.querySelector(`${lyricLine}:not(.modifedLyricsWrapper)`)) {
-                retranslatePending = true;
-                setTimeout(() => { retranslatePending = false; translate(); }, 100);
-            }
-        }
+        
         setTimeout(enableTranslateButton, 0);
     });
     observer.observe(anchor, { subtree: true, childList: true });

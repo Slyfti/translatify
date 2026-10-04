@@ -17,8 +17,18 @@ const aiBatchCache = new Map();
 // requests (e.g. repeated chorus lines) share one network call.
 const inFlightTranslations = new Map();
 
-// Active mutation observers
-const mutationObservers = new Map();
+// Observer state used to process mutations synchronously
+let observerState = { provider: null, mode: null, readProviders: [], sourceLanguage: 'auto', destinationLanguage: 'en' };
+
+function updateObserverState(provider, mode, readProviders, sourceLanguage, destinationLanguage) {
+    observerState = { 
+        provider, 
+        mode, 
+        readProviders: readProviders || [provider], 
+        sourceLanguage, 
+        destinationLanguage 
+    };
+}
 
 // DLX batch fallback: observer cache-misses queued here, batch-translated
 // after a short debounce.
@@ -54,10 +64,6 @@ let retranslateGuard = false;
 
 // Last song an AI batch completed for; prevents re-translating it.
 let lastAiSong = null;
-
-function getMainView() {
-    return document.querySelector("#main-view") || document.querySelector('#main') || document.body;
-}
 
 // Hopefully a reliable way to get the current focused lyrics w/out relying on class names (that changes w/ spotify UI updates).
 function getFocusedLyric() {
@@ -222,11 +228,6 @@ function clearTranslationCache(scope) {
 }
 
 function disconnectAllObservers() {
-    mutationObservers.forEach((observer, key) => {
-        observer.disconnect();
-        console.log('Disconnected observer for:', key);
-    });
-    mutationObservers.clear();
     // Clear pending DLX batch state.
     if (dlxDebounceTimer) { clearTimeout(dlxDebounceTimer); dlxDebounceTimer = null; }
     dlxPendingMisses.length = 0;
@@ -321,96 +322,63 @@ async function runDlxObserverBatch() {
     if (dlxPendingMisses.length > 0) scheduleDlxBatch();
 }
 
-async function setupMutationObserver(provider, mode, readProviders) {
-    // Cache namespaces the observer reads, highest priority first (defaults to
-    // the provider's own; the AI flow passes ['customAI', 'google']).
-    const readNamespaces = readProviders || [provider];
+function processLyricsMutations(mutations) {
+    if (!observerState.provider) return false;
+    const translateButton = document.querySelector("button[data-testid='translate-button']");
+    if (!translateButton || translateButton.getAttribute("aria-pressed") !== "true") return false;
 
-    // Use a single observer that watches the main view for any changes
-    const observerKey = `mainView`;
+    let hasNewUntranslated = false;
 
-    // Only set up once - don't recreate if already exists
-    if (mutationObservers.has(observerKey)) {
-        console.log('Translatify: Observer already set up for main view');
-        return;
-    }
+    const processWrapper = (wrapper) => {
+        if (wrapper.classList.contains("modifedLyricsWrapper")) return;
+        const lyricsText = wrapper.firstChild?.textContent;
+        if (!lyricsText) return;
 
-    // Get language settings once when setting up observer
-    const sourceLanguage = "auto";
-    let destinationLanguage = "en";
-    if (isExtensionAlive()) {
-        try {
-            const stored = await chrome.storage.local.get(["language"]);
-            destinationLanguage = stored.language || "en";
-        } catch { }
-    }
-
-    const observer = new MutationObserver((mutations) => {
-        const translateButton = document.querySelector("button[data-testid='translate-button']");
-        if (!translateButton || translateButton.getAttribute("aria-pressed") !== "true") return;
-
-        const processWrapper = (wrapper) => {
-            if (wrapper.classList.contains("modifedLyricsWrapper")) return;
-
-            const lyricsText = wrapper.firstChild?.textContent;
-            if (!lyricsText) return;
-
-            // Render from cache, checking read namespaces in priority order.
-            for (const ns of readNamespaces) {
-                const key = lineCacheKey(ns, lyricsText, sourceLanguage, destinationLanguage);
-                if (translationCache.has(key)) {
-                    replaceLyric(translationCache.get(key), wrapper);
-                    focusActiveLyric();
-                    return;
-                }
-            }
-
-            if (provider === 'dlx') {
-                // Untranslatable lines (♪, pure punctuation) are marked as
-                // themselves; only real text needs a DLX request.
-                if (isUntranslatable(lyricsText)) {
-                    replaceLyric(lyricsText, wrapper);
-                } else if (mode === 'batch') {
-                    // Queue for one debounced batch request per burst of new lines.
-                    dlxPendingMisses.push({ wrapper, lyricsText, sourceLanguage, destinationLanguage });
-                    scheduleDlxBatch();
-                } else {
-                    // Per-line mode: honor the user's choice for late lines too.
-                    translateAndUpdateAsync('dlx', wrapper, lyricsText, sourceLanguage, destinationLanguage);
-                }
-            } else if (!(aiBatchPending && !aiFailoverEnabled)) {
-                translateAndUpdateAsync(provider, wrapper, lyricsText, sourceLanguage, destinationLanguage);
-            }
-            focusActiveLyric();
-        };
-
-        for (const mutation of mutations) {
-            for (const node of mutation.addedNodes) {
-                if (node.nodeType !== Node.ELEMENT_NODE) continue;
-                if (node.matches?.(lyricLine)) {
-                    processWrapper(node);
-                } else {
-                    // A full lyrics-page mount adds one container node with the
-                    // lyric lines as descendants — translate those too.
-                    node.querySelectorAll?.(lyricLine).forEach(processWrapper);
-                }
+        // Render from cache, checking read namespaces in priority order.
+        for (const ns of observerState.readProviders) {
+            const key = lineCacheKey(ns, lyricsText, observerState.sourceLanguage, observerState.destinationLanguage);
+            if (translationCache.has(key)) {
+                replaceLyric(translationCache.get(key), wrapper);
+                focusActiveLyric();
+                return;
             }
         }
-    });
 
-    const target = getMainView();
-    if (target) {
-        observer.observe(target, {
-            childList: true,
-            subtree: true,
-            characterData: true
-        });
+        if (observerState.provider === 'dlx') {
+            // Untranslatable lines (♪, pure punctuation) are marked as
+            // themselves; only real text needs a DLX request.
+            if (isUntranslatable(lyricsText)) {
+                replaceLyric(lyricsText, wrapper);
+            } else if (observerState.mode === 'batch') {
+                // Queue for one debounced batch request per burst of new lines.
+                dlxPendingMisses.push({ wrapper, lyricsText, sourceLanguage: observerState.sourceLanguage, destinationLanguage: observerState.destinationLanguage });
+                scheduleDlxBatch();
+            } else {
+                // Per-line mode: honor the user's choice for late lines too.
+                translateAndUpdateAsync('dlx', wrapper, lyricsText, observerState.sourceLanguage, observerState.destinationLanguage);
+            }
+        } else if (!(aiBatchPending && !aiFailoverEnabled)) {
+            translateAndUpdateAsync(observerState.provider, wrapper, lyricsText, observerState.sourceLanguage, observerState.destinationLanguage);
+        }
+        focusActiveLyric();
+        hasNewUntranslated = true;
+    };
 
-        mutationObservers.set(observerKey, observer);
-        console.log('Observer setup for main view on:', target);
-    } else {
-        console.warn('No target found to observe for mutations');
+    for (const mutation of mutations) {
+        if (mutation.type !== 'childList') continue;
+        for (const node of mutation.addedNodes) {
+            if (node.nodeType !== Node.ELEMENT_NODE) continue;
+            if (node.matches?.(lyricLine)) {
+                processWrapper(node);
+            } else {
+                // A full lyrics-page mount adds one container node with the
+                // lyric lines as descendants — translate those too.
+                node.querySelectorAll?.(lyricLine).forEach(processWrapper);
+            }
+        }
     }
+    
+    return hasNewUntranslated;
 }
 
 // Replace a lyric line in-place with its translation, preserving the original
@@ -463,7 +431,7 @@ async function translatePerLine(provider, sourceLanguage, destinationLanguage) {
 
     focusActiveLyric();
     // Keep the observer in per-line mode for late lines.
-    setupMutationObserver(provider, 'perline');
+    updateObserverState(provider, 'perline', null, sourceLanguage, destinationLanguage);
 }
 
 // Translate the whole lyric sheet in one DLX request (DLX preserves newlines),
@@ -528,7 +496,7 @@ async function translateBatchWithDlx(sourceLanguage, destinationLanguage) {
     });
 
     focusActiveLyric();
-    setupMutationObserver('dlx', 'batch');
+    updateObserverState('dlx', 'batch', null, sourceLanguage, destinationLanguage);
     // Flush observer misses that queued while the batch was in flight.
     if (dlxPendingMisses.length > 0) scheduleDlxBatch();
 }
@@ -570,7 +538,7 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
 
     // Start the observer now so lyrics appearing during the AI call get
     // Google-translated; it reads 'customAI' first, then 'google'.
-    setupMutationObserver('google', undefined, ['customAI', 'google']);
+    updateObserverState('google', undefined, ['customAI', 'google'], sourceLanguage, destinationLanguage);
 
     aiBatchPending = true;
 
@@ -638,7 +606,7 @@ async function translateBatchWithAIAndRender(sourceLanguage, destinationLanguage
     });
 
     focusActiveLyric();
-    setupMutationObserver('google', undefined, ['customAI', 'google']);
+    updateObserverState('google', undefined, ['customAI', 'google'], sourceLanguage, destinationLanguage);
 }
 
 // MAIN TRANSLATION FUNCTION
