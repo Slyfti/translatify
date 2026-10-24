@@ -38,14 +38,22 @@ function updateTranslateButtonProviderState() {
     }).catch(() => {});
 }
 
-// Wait for all the buttons to load before adding the translate button
-function loadChecker() {
-    var repeatButton = document.querySelector("button[data-testid='control-button-repeat']");
-    var nowPlaying = document.querySelector("div[data-testid='now-playing-widget']");
-    var lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
-    var lyricsWrapperList = document.querySelectorAll("div[data-testid='lyrics-line']");
+// Button the translate button is cloned from and placed next to. Falls back to
+// the last player control if Spotify renames the repeat button.
+function getAnchorButton() {
+    return findLastSpotify('anchorButton');
+}
 
-    if (repeatButton && nowPlaying && lyricsButton && (lyricsButton.getAttribute("data-active") == "false" || lyricsWrapperList[0])) {
+// Startup time, so loadChecker can report what it is still waiting for.
+const loadCheckerStart = Date.now();
+let loadCheckerWarned = false;
+
+// Wait for the player bar before adding the translate button. Lyrics that
+// mount later are picked up by translate() and the observer.
+function loadChecker() {
+    var repeatButton = getAnchorButton();
+
+    if (repeatButton) {
         addTranslateButton();
         enableTranslateButton();
         setupListening();
@@ -59,6 +67,11 @@ function loadChecker() {
         });
 
     } else {
+        // Log once what is missing, so a Spotify rename shows up in the console.
+        if (!loadCheckerWarned && Date.now() - loadCheckerStart > 10000) {
+            loadCheckerWarned = true;
+            console.warn("Translatify: still waiting for Spotify elements: anchorButton");
+        }
         setTimeout(loadChecker, 100);
     }
 }
@@ -71,9 +84,8 @@ function ensureTranslateButton() {
     const existingButton = document.querySelector("button[data-testid='translate-button']");
     if (existingButton) return; // still present, nothing to do
 
-    const repeatButton = document.querySelector("button[data-testid='control-button-repeat']");
-    const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
-    if (!repeatButton || !lyricsButton) return; // bar not ready yet
+    const repeatButton = getAnchorButton();
+    if (!repeatButton) return; // bar not ready yet
 
     console.log("Translatify: Translate button missing, re-injecting (control bar re-rendered)");
     eraseButton(); // safety: clear any stale leftover loader
@@ -185,15 +197,16 @@ function toggleTranslateButton() {
 
 function enableTranslateButton() {
     const translateButton = document.querySelector("button[data-testid='translate-button']");
-    const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
-    if (!translateButton || !lyricsButton) return;
+    if (!translateButton) return;
 
-    translateButton.disabled = lyricsButton.getAttribute("data-active") !== "true";
+    // Only disable when Spotify's lyrics button exists and says lyrics are
+    // closed; a missing or renamed lyrics button must not block translation.
+    translateButton.disabled = !!findSpotify('lyricsButton') && !isLyricsOpen();
 }
 
 
 function addTranslateButton() {
-    const repeatButton = document.querySelector("button[data-testid='control-button-repeat']");
+    const repeatButton = getAnchorButton();
     const buttonBar = repeatButton.parentElement;
     const translateButton = repeatButton.cloneNode(true);
 

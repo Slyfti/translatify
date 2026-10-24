@@ -38,9 +38,6 @@ let dlxDebounceTimer = null;
 // batch (or per-line requests) until it finishes.
 let dlxBatchInFlight = false;
 
-// To modify if spotify decides to change variable names
-const lyricLine = "div[data-testid='lyrics-line']";
-
 // True while an AI batch translation is in flight; re-entrancy guard for translate().
 let aiBatchPending = false;
 
@@ -147,12 +144,16 @@ async function translateText(provider, text, sourceLanguage, destinationLanguage
     }
 }
 
+// Lyrics count as open when lines are on the page, or when Spotify's lyrics
+// button says so (lines may still be loading).
+function isLyricsOpen() {
+    if (document.querySelector(lyricLine)) return true;
+    return findSpotify('lyricsButton')?.getAttribute("data-active") === "true";
+}
+
 function getSongInfo() {
-    const titleEl = document.querySelector('[data-testid="context-item-link"]') ||
-        document.querySelector('[data-testid="context-item-info-title"]') ||
-        document.querySelector('a[data-testid="now-playing-track-link"]');
-    const artistEl = document.querySelector('[data-testid="context-item-info-artist"]') ||
-        document.querySelector('[data-testid="context-item-info-subtitle"]');
+    const titleEl = findSpotify('songTitle');
+    const artistEl = findSpotify('songArtist');
     return {
         songTitle: titleEl?.textContent?.trim() || '',
         artistName: artistEl?.textContent?.trim() || ''
@@ -660,11 +661,10 @@ async function runTranslate() {
     }
 
     const translateButton = document.querySelector("button[data-testid='translate-button']");
-    const lyricsButton = document.querySelector("button[data-testid='lyrics-button']");
-    if (!translateButton || !lyricsButton) return;
+    if (!translateButton) return;
 
 
-    if (translateButton.getAttribute("aria-pressed") == "true" && lyricsButton.getAttribute("data-active") == "true") {
+    if (translateButton.getAttribute("aria-pressed") == "true" && isLyricsOpen()) {
         // Resolve the provider from the registry: the configured one when its
         // required settings are present, Google otherwise.
         const settings = await chrome.storage.local.get(PROVIDER_SETTING_KEYS);
